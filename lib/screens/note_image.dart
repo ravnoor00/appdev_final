@@ -171,18 +171,7 @@ class _ImageToText extends State<ImageToText> {
                       return Image.file(_takenImages[index]);
                     },
                   ),
-            FloatingActionButton(
-              onPressed: takeImage,
-              tooltip: 'Pick Image from Camera',
-              child: Icon(Icons.add_a_photo),
-            ),
-            SizedBox(width: 16),
-            FloatingActionButton(
-              onPressed: getImages,
-              tooltip: 'Pick Images from Gallery',
-              child: Icon(Icons.photo_library),
-            ),
-            SizedBox(height: 16),
+
             Text(_responseText),
             TextField(
               controller: _courseController,
@@ -195,17 +184,23 @@ class _ImageToText extends State<ImageToText> {
                     EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
               ),
             ),
+
+            actions(),
+            SizedBox(height: 25),
+
             !loadingText
                 ? ElevatedButton(
                     onPressed: () {
-                    try {
-                      String course = _courseController.text.isEmpty ? '' : _courseController.text;
-                      sendRecognizedText(_notes, course);
-                    } catch (e) {
-                      print('Error while sending recognized text: $e');
-                      // You can also display the error to the user by updating the UI accordingly.
-                    }
-                  },
+                      try {
+                        String course = _courseController.text.isEmpty
+                            ? ''
+                            : _courseController.text;
+                        sendRecognizedText(_notes, course);
+                      } catch (e) {
+                        print('Error while sending recognized text: $e');
+                        // You can also display the error to the user by updating the UI accordingly.
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       elevation: 5,
                       shape: RoundedRectangleBorder(
@@ -221,5 +216,25 @@ class _ImageToText extends State<ImageToText> {
       ),
     ));
   }
-}
 
+  Widget actions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        FloatingActionButton(
+          backgroundColor: Colors.orange[800],
+          onPressed: getImages,
+          tooltip: 'Pick Images from Gallery',
+          child: SizedBox(width: 50, child: Icon(Icons.photo_library,)),
+        ),
+        const SizedBox(width: 30),
+        FloatingActionButton(
+          backgroundColor: Colors.grey,
+          onPressed: takeImage,
+          tooltip: 'Pick Image from Camera',
+          child: SizedBox(width: 50, child: Icon(Icons.add_a_photo, )),
+        ),
+      ],
+    );
+  }
+}

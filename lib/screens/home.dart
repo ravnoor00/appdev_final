@@ -1,58 +1,78 @@
 import 'package:flutter/material.dart';
+import '../components/Nav.dart';
 import 'note_image.dart';
 import 'profile.dart';
+import '../utils.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Home Page: Previous questions will be displayed here'),
-    );
-  }
-}
-
-class MainApp extends StatefulWidget {
-  const MainApp({Key? key}) : super(key: key);
+class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
 
   @override
-  _MainAppState createState() => _MainAppState();
+  _HomeState createState() => _HomeState();
 }
 
-class _MainAppState extends State<MainApp> {
-  int _currentIndex = 0;
-
-  final List<Widget> _pages = [
-    const HomePage(),
-    const ImageToText(),
-    const ProfilePage(),
-  ];
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
+class _HomeState extends State<Home> {
+  var w;
 
   @override
   Widget build(BuildContext context) {
+    w = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: _onTabTapped,
-        currentIndex: _currentIndex,
-        items: [
-          const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          const BottomNavigationBarItem(icon: Icon(Icons.camera), label: 'Quiz'),
-          const BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
+        backgroundColor: yellow,
+        appBar: appBar("Hello, Ravnoor"),
+        body: Container(
+          margin: EdgeInsets.all(25),
+          child: Column(
+              children: [heading(), const SizedBox(height: 50), noteCards()]),
+        ));
+  }
+
+  Widget heading() {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Text("My Questions",
+          style: TextStyle(
+              fontSize: 45,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[800])),
     );
+  }
+
+  Widget noteCards() {
+    List<Widget> noteCardWidgets = [];
+    for (int i = 0; i < 10; i++) {
+      noteCardWidgets.add(noteCard("AP Biology"));
+    }
+
+    int crossAxisCount = (w / 450).ceil();
+    return Expanded(
+        child: GridView.count(
+      childAspectRatio: 0.75,
+      crossAxisSpacing: 5,
+      mainAxisSpacing: 5,
+      crossAxisCount: crossAxisCount,
+      children: noteCardWidgets,
+    ));
+  }
+
+  Widget noteCard(String subject) {
+    return Column(children: [
+      Card(
+        elevation: 3,
+        child: Column(
+          children: [
+            const SizedBox(height: 30),
+            ...List.generate(
+              28,
+              (index) => Divider(color: Colors.grey, height: 10),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 10),
+      Text(subject),
+      const SizedBox(height: 15),
+    ]);
   }
 }
