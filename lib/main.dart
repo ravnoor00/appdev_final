@@ -7,10 +7,15 @@ import 'screens/profile.dart';
 import 'utils.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('It worked');
+  } catch (e) {
+    print(e);
+  }
   runApp(const MyApp());
 }
 
