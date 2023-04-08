@@ -24,7 +24,7 @@ class _HomeState extends State<Home> {
         backgroundColor: yellow,
         appBar: appBar("Hello, Ravnoor"),
         body: Container(
-          margin: EdgeInsets.all(25),
+          margin: const EdgeInsets.all(25),
           child: Column(
               children: [heading(), const SizedBox(height: 50), noteCards()]),
         ));
