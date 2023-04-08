@@ -43,6 +43,8 @@ dependencies:
   firebase_core: ^2.9.0
   google_mlkit_text_recognition: ^0.5.0
   cloud_firestore: ^4.4.5
+  sqflite: ^2.2.6
+  path: ^1.8.2
 
 
 dev_dependencies:

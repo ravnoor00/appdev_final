@@ -3,6 +3,8 @@ import '../components/Nav.dart';
 import 'note_image.dart';
 import 'profile.dart';
 import '../utils.dart';
+import '../models/questions_list.dart';
+import '../database_helper.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -40,23 +42,36 @@ class _HomeState extends State<Home> {
   }
 
   Widget noteCards() {
-    List<Widget> noteCardWidgets = [];
-    for (int i = 0; i < 10; i++) {
-      noteCardWidgets.add(noteCard("AP Biology"));
-    }
+    return FutureBuilder<List<QuestionsList>>(
+      future: DatabaseHelper().queryAllRows(),
+      builder: (BuildContext context, AsyncSnapshot<List<QuestionsList>> snapshot) {
+        if (snapshot.hasData) {
+          List<Widget> noteCardWidgets = [];
+          for (var questionsList in snapshot.data!) {
+            noteCardWidgets.add(noteCard(questionsList.name, questionsList.questions));
+          }
 
-    int crossAxisCount = (w / 450).ceil();
-    return Expanded(
-        child: GridView.count(
-      childAspectRatio: 0.75,
-      crossAxisSpacing: 5,
-      mainAxisSpacing: 5,
-      crossAxisCount: crossAxisCount,
-      children: noteCardWidgets,
-    ));
+          int crossAxisCount = (w / 450).ceil();
+          return Expanded(
+            child: GridView.count(
+              childAspectRatio: 0.75,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              crossAxisCount: crossAxisCount,
+              children: noteCardWidgets,
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+
+        // By default, show a loading spinner.
+        return const CircularProgressIndicator();
+      },
+    );
   }
 
-  Widget noteCard(String subject) {
+  Widget noteCard(String subject, List questions) {
     return Column(children: [
       Card(
         elevation: 3,
