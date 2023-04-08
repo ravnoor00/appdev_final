@@ -15,6 +15,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   var w;
+  late DatabaseHelper dbHelper;
+
+  @override
+  void initState() {
+    super.initState();
+    dbHelper = DatabaseHelper();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +33,7 @@ class _HomeState extends State<Home> {
         body: Container(
           margin: const EdgeInsets.all(25),
           child: Column(
-              children: [heading(), const SizedBox(height: 50), noteCards()]),
+              children: [heading(), const SizedBox(height: 50), _fetchData()]),
         ));
   }
 
@@ -41,40 +48,40 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget noteCards() {
+  Widget _fetchData() {
     return FutureBuilder<List<QuestionsList>>(
-      future: DatabaseHelper().queryAllRows(),
+      future: dbHelper.queryAllRows(),
       builder: (BuildContext context, AsyncSnapshot<List<QuestionsList>> snapshot) {
-        if (snapshot.hasData) {
-        if (snapshot.data!.isEmpty) {
-          return const Text('No previous questions');
-        }
-          List<Widget> noteCardWidgets = [];
-          for (var questionsList in snapshot.data!) {
-            noteCardWidgets.add(noteCard(questionsList.name, questionsList.questions));
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
           }
-
-          int crossAxisCount = (w / 450).ceil();
-          return Expanded(
-            child: GridView.count(
-              childAspectRatio: 0.75,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
-              crossAxisCount: crossAxisCount,
-              children: noteCardWidgets,
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
+          if (snapshot.data!.isEmpty) {
+          return const Center(child: Text('Scan your notes', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)));
         }
-
-        // By default, show a loading spinner.
-        return const CircularProgressIndicator();
+          return noteCards(snapshot.data!);
+        } else {
+          return const CircularProgressIndicator();
+        }
       },
     );
   }
 
-  Widget noteCard(String subject, List questions) {
+  Widget noteCards(List<QuestionsList> data) {
+    List<Widget> noteCardWidgets = data.map((questionList) => noteCard(questionList.name)).toList();
+
+    int crossAxisCount = (w / 450).ceil();
+    return Expanded(
+        child: GridView.count(
+      childAspectRatio: 0.75,
+      crossAxisSpacing: 5,
+      mainAxisSpacing: 5,
+      crossAxisCount: crossAxisCount,
+      children: noteCardWidgets,
+    ));
+  }
+
+  Widget noteCard(String subject) {
     return Column(children: [
       Card(
         elevation: 3,
@@ -83,7 +90,7 @@ class _HomeState extends State<Home> {
             const SizedBox(height: 30),
             ...List.generate(
               28,
-              (index) => Divider(color: Colors.grey, height: 10),
+              (index) => const Divider(color: Colors.grey, height: 10),
             ),
           ],
         ),
