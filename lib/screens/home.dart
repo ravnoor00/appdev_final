@@ -46,6 +46,9 @@ class _HomeState extends State<Home> {
       future: DatabaseHelper().queryAllRows(),
       builder: (BuildContext context, AsyncSnapshot<List<QuestionsList>> snapshot) {
         if (snapshot.hasData) {
+        if (snapshot.data!.isEmpty) {
+          return const Text('No previous questions');
+        }
           List<Widget> noteCardWidgets = [];
           for (var questionsList in snapshot.data!) {
             noteCardWidgets.add(noteCard(questionsList.name, questionsList.questions));
