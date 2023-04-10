@@ -96,7 +96,7 @@ class _ImageToText extends State<ImageToText> {
   Future<void> sendRecognizedText(String recognizedText, String course) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.247:5001/process_image'),
+        Uri.parse('http://192.168.1.206:5001/process_image'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'text': recognizedText}),
       );

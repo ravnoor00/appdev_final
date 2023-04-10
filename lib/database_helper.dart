@@ -47,23 +47,24 @@ class DatabaseHelper {
       )
     ''');
   }
-Future<int> insertList(QuestionsList questionsList) async {
-  Database? db = await database;
-  final jsonString = jsonEncode(questionsList.questions);
-  final row = {
-    columnName: questionsList.name,
-    columnQuestions: jsonString,
-  };
-  return await db!.insert(table, row);
-}
+
+  Future<int> insertList(QuestionsList questionsList) async {
+    Database? db = await database;
+    final jsonString = jsonEncode(questionsList.questions);
+    final row = {
+      columnName: questionsList.name,
+      columnQuestions: jsonString,
+    };
+    return await db!.insert(table, row);
+  }
 
   Future<List<QuestionsList>> queryAllRows() async {
-    Database? db = await DatabaseHelper().database;
+    Database? db = await database;
     List<Map<String, dynamic>> result = await db!.query(table);
     return result.map((row) {
       final questions = jsonDecode(row[columnQuestions]) as List;
       final name = row[columnName] as String;
-      return QuestionsList(questions,name);
+      return QuestionsList(questions, name);
     }).toList();
   }
 }

@@ -22,7 +22,7 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
   Future<void> getGrades(String userAnswer, String course) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.247:5001/generate_score'),
+        Uri.parse('http://192.168.1.206:5001/generate_score'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'user': userAnswer,
@@ -34,7 +34,7 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
       if (response.statusCode == 200) {
         var suggestion = response.body;
         suggestion = suggestion.substring(
-            suggestion.lastIndexOf(':') + 1, suggestion.lastIndexOf('.') + 1);
+            suggestion.lastIndexOf(':') + 2, suggestion.lastIndexOf('.') + 1);
         suggestion.replaceAll('\"', "");
         _responseText = suggestion;
       } else {
