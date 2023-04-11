@@ -12,6 +12,7 @@ import '../models/question.dart';
 import 'flashcards.dart';
 import 'package:makequiz/models/flashcard.dart';
 import 'feynman.dart';
+import '../components/study_options.dart';
 
 class ImageToText extends StatefulWidget {
   const ImageToText({Key? key}) : super(key: key);
@@ -234,59 +235,41 @@ class _ImageToText extends State<ImageToText> {
   }
 
   void _showModal(BuildContext context) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: const Text('Choose action'),
-        actions: <Widget>[
-          CupertinoActionSheetAction(
-            child: const Text('Questions File'),
-            onPressed: () {
+    showModalMenu(
+      context,
+      onQuestionsFile: () {
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => QuestionsFlow(questions: _questions),
+          ),
+        );
+      },
+      onFlashcards: () {
+     List<Flashcard> flashcards = generateFlashcards(_questions);
               Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => QuestionsFlow(questions: _questions),
+     builder: (context) => FlashcardTest(flashcards: flashcards),
+          ),
+        );
+      }, onFeynman: () { 
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+         MaterialPageRoute(
+          builder: (context) => FeynmanFlow(
+           questions: _questions, currentQuestionIndex: 0),
                 ),
               );
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: const Text('Flashcards'),
-            onPressed: () {
-              List<Flashcard> flashcards = generateFlashcards(_questions);
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FlashcardTest(flashcards: flashcards),
-                ),
-              );
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: const Text('Feynman\' Technique'),
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      FeynmanFlow(questions: _questions, currentQuestionIndex: 0),
-                ),
-              );
-            },
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          child: const Text('Cancel'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+       },
     );
   }
+
+  // ...
+
 
   Widget actions() {
     return Row(

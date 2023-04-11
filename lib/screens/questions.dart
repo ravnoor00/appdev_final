@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'home.dart';
+
 class QuestionAnswerPage extends StatefulWidget {
   final String question;
   final String answer;
@@ -115,7 +117,15 @@ class _QuestionsFlow extends State<QuestionsFlow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Questions')),
+      appBar: AppBar(title: Text('Questions'),
+      leading: IconButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Home()
+                  ),
+                ),
+                icon: const Icon(Icons.home))),
       body: ListView.builder(
         itemCount: widget.questions.length,
         itemBuilder: (context, index) {

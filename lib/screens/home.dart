@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:makequiz/models/flashcard.dart';
 import '../components/Nav.dart';
+import '../components/study_options.dart';
 import '../utils.dart';
 import '../models/question.dart';
 import '../database_helper.dart';
+import 'feynman.dart';
+import 'flashcards.dart';
 import 'questions.dart';
 
 class Home extends StatefulWidget {
@@ -89,14 +93,7 @@ class _Home extends State<Home> {
   Widget noteCard(QuestionsList questionList) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => QuestionsFlow(
-              questions: questionList.questions,
-            ),
-          ),
-        );
+        _showModal(context, questionList.questions);
       },
       child: Column(
         children: [
@@ -114,7 +111,7 @@ class _Home extends State<Home> {
                   ],
                 ),
               ),
-             Positioned(
+              Positioned(
                 top: 10,
                 left: 10,
                 child: Text(
@@ -163,6 +160,41 @@ class _Home extends State<Home> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showModal(BuildContext context, var questions) {
+    showModalMenu(
+      context,
+      onQuestionsFile: () {
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => QuestionsFlow(questions: questions),
+          ),
+        );
+      },
+      onFlashcards: () {
+        List<Flashcard> flashcards = generateFlashcards(questions);
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FlashcardTest(flashcards: flashcards),
+          ),
+        );
+      },
+      onFeynman: () {
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                FeynmanFlow(questions: questions, currentQuestionIndex: 0),
+          ),
+        );
+      },
     );
   }
 

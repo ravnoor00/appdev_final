@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'home.dart';
+
 class Feynman extends StatefulWidget {
   final String question;
   final String answer;
@@ -140,7 +142,15 @@ class _FeynmanFlow extends State<FeynmanFlow> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:
-          AppBar(title: Text('Question ${widget.currentQuestionIndex + 1}')),
+          AppBar(title: Text('Question ${widget.currentQuestionIndex + 1}/ ${widget.questions.length} '),
+          leading: IconButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Home()
+                  ),
+                ),
+                icon: const Icon(Icons.home))),
       body: Feynman(
         question:
             widget.questions[widget.currentQuestionIndex]['question'] ?? '',
