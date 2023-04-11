@@ -2,41 +2,38 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class QuestionAnswerPage extends StatefulWidget {
+class Feynman extends StatefulWidget {
   final String question;
   final String answer;
 
-  const QuestionAnswerPage(
+  const Feynman(
       {super.key, required this.question, required this.answer});
 
   @override
-  State<QuestionAnswerPage> createState() => _QuestionAnswerPage();
+  State<Feynman> createState() => _Feynman();
 }
 
-class _QuestionAnswerPage extends State<QuestionAnswerPage> {
+class _Feynman extends State<Feynman> {
   final TextEditingController _textEditingController = TextEditingController();
   bool _submitted = false;
   String? _responseText;
   Future? _gradesFuture;
 
-  Future<void> getGrades(String userAnswer, String course) async {
+  Future<void> getStudentResponse(String teacher, String answer, String question) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.206:5001/generate_score'),
+        Uri.parse('http://192.168.1.247:5001/generate_student_response'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'user': userAnswer,
-          'actual': widget.answer,
-          'course': course,
+          'user': teacher,
+          'answer': answer,
+          'question':question,
         }),
       );
 
       if (response.statusCode == 200) {
         var suggestion = response.body;
-        suggestion = suggestion.substring(
-            suggestion.lastIndexOf(':') + 2, suggestion.lastIndexOf('.') + 1);
-        suggestion.replaceAll('\"', "");
-        _responseText = suggestion;
+        _responseText = suggestion.substring(suggestion.lastIndexOf(':') + 1, suggestion.lastIndexOf('.') + 1);
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
       }
@@ -72,8 +69,8 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
                       onPressed: () {
                         setState(() {
                           _submitted = true;
-                          _gradesFuture = getGrades(
-                              _textEditingController.text, widget.answer);
+                          _gradesFuture = getStudentResponse(
+                              _textEditingController.text, widget.answer, widget.question);
                           FocusManager.instance.primaryFocus?.unfocus();
                         });
                       },
@@ -106,24 +103,24 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
   }
 }
 
-class QuestionsFlow extends StatefulWidget {
+class FeynmanFlow extends StatefulWidget {
   final List<Map<String, dynamic>> questions;
   final int currentQuestionIndex;
 
-  const QuestionsFlow(
+  const FeynmanFlow(
       {super.key, required this.questions, required this.currentQuestionIndex});
 
   @override
-  _QuestionsFlowState createState() => _QuestionsFlowState();
+  State<FeynmanFlow> createState() => _FeynmanFlow();
 }
 
-class _QuestionsFlowState extends State<QuestionsFlow> {
+class _FeynmanFlow extends State<FeynmanFlow> {
   void _nextQuestion() {
     if (widget.currentQuestionIndex < widget.questions.length - 1) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => QuestionsFlow(
+          builder: (context) => FeynmanFlow(
             questions: widget.questions,
             currentQuestionIndex: widget.currentQuestionIndex + 1,
           ),
@@ -143,7 +140,7 @@ class _QuestionsFlowState extends State<QuestionsFlow> {
     return Scaffold(
       appBar:
           AppBar(title: Text('Question ${widget.currentQuestionIndex + 1}')),
-      body: QuestionAnswerPage(
+      body: Feynman(
         question:
             widget.questions[widget.currentQuestionIndex]['question'] ?? '',
         answer: widget.questions[widget.currentQuestionIndex]['answer'] ?? '',

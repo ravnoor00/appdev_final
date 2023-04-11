@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import '../components/Nav.dart';
-import 'note_image.dart';
-import 'profile.dart';
 import '../utils.dart';
-import '../models/questions_list.dart';
+import '../models/question.dart';
 import '../database_helper.dart';
+import 'questions.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  State<Home> createState() => _Home();
 }
 
-class _HomeState extends State<Home> {
+class _Home extends State<Home> {
   var w;
   late DatabaseHelper dbHelper;
 
@@ -68,7 +67,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget noteCards(List<QuestionsList> data) {
-    List<Widget> noteCardWidgets = data.map((questionList) => noteCard(questionList.name)).toList();
+    List<Widget> noteCardWidgets = data.map((questionList) => noteCard(questionList)).toList();
 
     int crossAxisCount = (w / 450).ceil();
     return Expanded(
@@ -81,23 +80,38 @@ class _HomeState extends State<Home> {
     ));
   }
 
-  Widget noteCard(String subject) {
-    return Column(children: [
-      Card(
-        elevation: 3,
-        child: Column(
-          children: [
-            const SizedBox(height: 30),
-            ...List.generate(
-              28,
-              (index) => const Divider(color: Colors.grey, height: 10),
-            ),
-          ],
+ Widget noteCard(QuestionsList questionList) {
+  return InkWell(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => QuestionsFlow(
+            questions: questionList.questions,
+          ),
         ),
-      ),
-      const SizedBox(height: 10),
-      Text(subject),
-      const SizedBox(height: 15),
-    ]);
-  }
+      );
+    },
+    child: Column(
+      children: [
+        Card(
+          elevation: 3,
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              ...List.generate(
+                28,
+                (index) => const Divider(color: Colors.grey, height: 10),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(questionList.name),
+        const SizedBox(height: 15),
+      ],
+    ),
+  );
+}
+
 }

@@ -1,11 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'question.dart';
+import 'questions.dart';
+import '../database_helper.dart';
+import '../models/question.dart';
+import 'flashcards.dart';
+import 'package:makequiz/models/flashcard.dart';
+import 'feynman.dart';
 
 class ImageToText extends StatefulWidget {
   const ImageToText({Key? key}) : super(key: key);
@@ -17,11 +23,20 @@ class ImageToText extends StatefulWidget {
 class _ImageToText extends State<ImageToText> {
   File? _image;
   String _responseText = '';
+  bool _sendingText = false;
   List<Map<String, dynamic>> _questions = [];
   String _notes = '';
   bool loadingText = false;
-  List<File> _takenImages = [];
+  final List<File> _takenImages = [];
   final TextEditingController _courseController = TextEditingController();
+
+  late DatabaseHelper dbHelper;
+
+  @override
+  void initState() {
+    super.initState();
+    dbHelper = DatabaseHelper();
+  }
 
   Future takeImage() async {
     final image = await ImagePicker().pickImage(source: ImageSource.camera);
@@ -93,7 +108,11 @@ class _ImageToText extends State<ImageToText> {
     }
   }
 
-  Future<void> sendRecognizedText(String recognizedText, String course) async {
+  Future<List<Map<String, dynamic>>> sendRecognizedText(
+      String recognizedText, String course) async {
+    setState(() {
+      _sendingText = true;
+    });
     try {
       final response = await http.post(
         Uri.parse('http://192.168.1.206:5001/process_image'),
@@ -109,22 +128,18 @@ class _ImageToText extends State<ImageToText> {
           _responseText = response.body;
           _questions = questions;
         });
-        if (context.mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  QuestionsFlow(questions: _questions, currentQuestionIndex: 0),
-            ),
-          );
-        }
-        ;
+        dbHelper.insertList(QuestionsList(_questions, course));
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
       }
     } catch (e) {
       print('Error while processing image: $e');
+    } finally {
+      setState(() {
+        _sendingText = false;
+      });
     }
+    return _questions;
   }
 
   List<Map<String, dynamic>> stringtoJSON(String reply) {
@@ -171,7 +186,6 @@ class _ImageToText extends State<ImageToText> {
                       return Image.file(_takenImages[index]);
                     },
                   ),
-
             Text(_responseText),
             TextField(
               controller: _courseController,
@@ -184,18 +198,20 @@ class _ImageToText extends State<ImageToText> {
                     EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
               ),
             ),
-
             actions(),
-            SizedBox(height: 25),
-
-            !loadingText
+            const SizedBox(height: 25),
+            !loadingText && !_sendingText
                 ? ElevatedButton(
                     onPressed: () {
                       try {
                         String course = _courseController.text.isEmpty
                             ? ''
                             : _courseController.text;
-                        sendRecognizedText(_notes, course);
+                        sendRecognizedText(_notes, course).then((_) {
+                          if (!_sendingText) {
+                            _showModal(context);
+                          }
+                        });
                       } catch (e) {
                         print('Error while sending recognized text: $e');
                         // You can also display the error to the user by updating the UI accordingly.
@@ -208,13 +224,68 @@ class _ImageToText extends State<ImageToText> {
                             30), // Adjust the corner radius as desired
                       ),
                     ),
-                    child: Text('Get Questions'),
+                    child: const Text('Get Questions'),
                   )
-                : CircularProgressIndicator(),
+                : const CircularProgressIndicator(),
           ],
         ),
       ),
     ));
+  }
+
+  void _showModal(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: const Text('Choose action'),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: const Text('Questions File'),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QuestionsFlow(questions: _questions),
+                ),
+              );
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Flashcards'),
+            onPressed: () {
+              List<Flashcard> flashcards = generateFlashcards(_questions);
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FlashcardTest(flashcards: flashcards),
+                ),
+              );
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Feynman\' Technique'),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      FeynmanFlow(questions: _questions, currentQuestionIndex: 0),
+                ),
+              );
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
   }
 
   Widget actions() {
@@ -222,17 +293,27 @@ class _ImageToText extends State<ImageToText> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         FloatingActionButton(
+          heroTag: 'Gallery',
           backgroundColor: Colors.orange[800],
           onPressed: getImages,
           tooltip: 'Pick Images from Gallery',
-          child: SizedBox(width: 50, child: Icon(Icons.photo_library,)),
+          child: const SizedBox(
+              width: 50,
+              child: Icon(
+                Icons.photo_library,
+              )),
         ),
         const SizedBox(width: 30),
         FloatingActionButton(
+          heroTag: 'Camera',
           backgroundColor: Colors.grey,
           onPressed: takeImage,
           tooltip: 'Pick Image from Camera',
-          child: SizedBox(width: 50, child: Icon(Icons.add_a_photo, )),
+          child: const SizedBox(
+              width: 50,
+              child: Icon(
+                Icons.add_a_photo,
+              )),
         ),
       ],
     );

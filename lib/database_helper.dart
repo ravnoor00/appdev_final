@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:convert';
-import '../models/questions_list.dart';
+import 'models/question.dart';
 
 class DatabaseHelper {
   static const _databaseName = 'user_questions.db';
@@ -62,9 +62,19 @@ class DatabaseHelper {
     Database? db = await database;
     List<Map<String, dynamic>> result = await db!.query(table);
     return result.map((row) {
-      final questions = jsonDecode(row[columnQuestions]) as List;
+final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
       final name = row[columnName] as String;
+      print(questions.toString());
       return QuestionsList(questions, name);
     }).toList();
   }
+
+  Future<void> deleteRow(String name) async {
+  Database? db = await database;
+  await db!.delete(table, where: '$columnName = ?', whereArgs: [name]);
 }
+
+}
+
