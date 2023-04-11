@@ -21,13 +21,12 @@ class _FlashcardTest extends State<FlashcardTest> {
       body: PageView.builder(
         itemCount: widget.flashcards.length,
         itemBuilder: (BuildContext context, int index) {
-          final flashcard = widget.flashcards[index];
+          final flashcardhere = widget.flashcards[index];
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: FlipCard(
-                frontText: flashcard.frontText,
-                backText: flashcard.backText,
+                flashcard: Flashcard(frontText: flashcardhere.frontText, backText: flashcardhere.backText),
               ),
             ),
           );

@@ -1,19 +1,18 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:makequiz/models/flashcard.dart';
 
 class FlipCard extends StatefulWidget {
-  final String frontText;
-  final String backText;
+  final Flashcard flashcard;
 
-  const FlipCard({Key? key, required this.frontText, required this.backText})
+  const FlipCard({Key? key, required this.flashcard})
       : super(key: key);
 
   @override
-  _FlipCardState createState() => _FlipCardState();
+  State<FlipCard> createState() => _FlipCard();
 }
 
-class _FlipCardState extends State<FlipCard>
-    with SingleTickerProviderStateMixin {
+class _FlipCard extends State<FlipCard> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -81,8 +80,8 @@ class _FlipCardState extends State<FlipCard>
               ..setEntry(3, 2, 0.001)
               ..rotateY(_animation.value),
             child: _isFrontVisible
-                ? _buildCardSide(widget.frontText)
-                : _buildCardSide(widget.backText),
+                ? _buildCardSide(widget.flashcard.frontText)
+                : _buildCardSide(widget.flashcard.backText),
           );
         },
       ),
