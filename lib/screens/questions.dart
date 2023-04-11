@@ -32,11 +32,7 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
       );
 
       if (response.statusCode == 200) {
-        var suggestion = response.body;
-        suggestion = suggestion.substring(
-            suggestion.lastIndexOf(':') + 2, suggestion.lastIndexOf('.') + 1);
-        suggestion.replaceAll('\"', "");
-        _responseText = suggestion;
+        _responseText = response.body;
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
       }

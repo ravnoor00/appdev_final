@@ -6,8 +6,7 @@ class Feynman extends StatefulWidget {
   final String question;
   final String answer;
 
-  const Feynman(
-      {super.key, required this.question, required this.answer});
+  const Feynman({super.key, required this.question, required this.answer});
 
   @override
   State<Feynman> createState() => _Feynman();
@@ -19,7 +18,8 @@ class _Feynman extends State<Feynman> {
   String? _responseText;
   Future? _gradesFuture;
 
-  Future<void> getStudentResponse(String teacher, String answer, String question) async {
+  Future<void> getStudentResponse(
+      String teacher, String answer, String question) async {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.1.247:5001/generate_student_response'),
@@ -27,13 +27,12 @@ class _Feynman extends State<Feynman> {
         body: jsonEncode({
           'user': teacher,
           'answer': answer,
-          'question':question,
+          'question': question,
         }),
       );
 
       if (response.statusCode == 200) {
-        var suggestion = response.body;
-        _responseText = suggestion.substring(suggestion.lastIndexOf(':') + 1, suggestion.lastIndexOf('.') + 1);
+        _responseText = response.body;
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
       }
@@ -70,7 +69,9 @@ class _Feynman extends State<Feynman> {
                         setState(() {
                           _submitted = true;
                           _gradesFuture = getStudentResponse(
-                              _textEditingController.text, widget.answer, widget.question);
+                              _textEditingController.text,
+                              widget.answer,
+                              widget.question);
                           FocusManager.instance.primaryFocus?.unfocus();
                         });
                       },

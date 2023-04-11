@@ -75,6 +75,14 @@ final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
   Database? db = await database;
   await db!.delete(table, where: '$columnName = ?', whereArgs: [name]);
 }
-
+  Future<void> updateName(String oldName, String newName) async {
+    Database? db = await database;
+    await db!.update(
+      table,
+      {columnName: newName},
+      where: '$columnName = ?',
+      whereArgs: [oldName],
+    );
+  }
 }
 
