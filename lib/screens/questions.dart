@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:makequiz/utils.dart';
 import 'home.dart';
 
 class QuestionAnswerPage extends StatefulWidget {
@@ -34,7 +34,11 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
       );
 
       if (response.statusCode == 200) {
-        _responseText = response.body;
+        var suggestion = response.body;
+        suggestion = suggestion.substring(
+            suggestion.lastIndexOf(':') + 2, suggestion.lastIndexOf('.') + 1);
+        suggestion.replaceAll('\"', "");
+        _responseText = suggestion;
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
       }
@@ -117,15 +121,16 @@ class _QuestionsFlow extends State<QuestionsFlow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Questions'),
-      leading: IconButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const Home()
+      backgroundColor: yellow,
+      appBar: AppBar(
+          backgroundColor: yellow,
+          title: Text('Questions'),
+          leading: IconButton(
+              onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Home()),
                   ),
-                ),
-                icon: const Icon(Icons.home))),
+              icon: const Icon(Icons.home))),
       body: ListView.builder(
         itemCount: widget.questions.length,
         itemBuilder: (context, index) {

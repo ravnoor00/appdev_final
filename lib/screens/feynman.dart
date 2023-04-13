@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:makequiz/utils.dart';
 import 'home.dart';
 
 class Feynman extends StatefulWidget {
@@ -34,7 +34,11 @@ class _Feynman extends State<Feynman> {
       );
 
       if (response.statusCode == 200) {
-        _responseText = response.body;
+        var student = response.body;
+        student = student.substring(
+            student.lastIndexOf(':') + 2, student.lastIndexOf('.') + 1);
+        student.replaceAll('\"', "");
+        _responseText = student;
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
       }
@@ -141,16 +145,17 @@ class _FeynmanFlow extends State<FeynmanFlow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: Text('Question ${widget.currentQuestionIndex + 1}/ ${widget.questions.length} '),
+      backgroundColor: yellow,
+      appBar: AppBar(
+        backgroundColor: yellow,
+          title: Text(
+              'Question ${widget.currentQuestionIndex + 1}/${widget.questions.length} '),
           leading: IconButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const Home()
+              onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Home()),
                   ),
-                ),
-                icon: const Icon(Icons.home))),
+              icon: const Icon(Icons.home))),
       body: Feynman(
         question:
             widget.questions[widget.currentQuestionIndex]['question'] ?? '',

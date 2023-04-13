@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 Future<void> showModalMenu(BuildContext context,
-    {required VoidCallback onQuestionsFile, required VoidCallback onFlashcards, required VoidCallback onFeynman}) async {
+    {required VoidCallback onQuestionsFile, required VoidCallback onFlashcards, required VoidCallback onFeynman, required VoidCallback onMatch}) async {
   showCupertinoModalPopup(
     context: context,
     builder: (BuildContext context) => CupertinoActionSheet(
@@ -20,6 +20,10 @@ Future<void> showModalMenu(BuildContext context,
          CupertinoActionSheetAction(
           onPressed: onFeynman,
           child: const Text("Feynman's Technique"),
+        ),
+        CupertinoActionSheetAction(
+          onPressed: onMatch,
+          child: const Text("Matching's Technique"),
         ),
       ],
       cancelButton: CupertinoActionSheetAction(

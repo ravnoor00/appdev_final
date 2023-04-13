@@ -80,18 +80,18 @@ class _FlipCard extends State<FlipCard> with SingleTickerProviderStateMixin {
               ..setEntry(3, 2, 0.001)
               ..rotateY(_animation.value),
             child: _isFrontVisible
-                ? _buildCardSide(widget.flashcard.frontText)
-                : _buildCardSide(widget.flashcard.backText),
+                ? _buildCardSide(widget.flashcard.frontText, context)
+                : _buildCardSide(widget.flashcard.backText, context),
           );
         },
       ),
     );
   }
 
-  Widget _buildCardSide(String text) {
+  Widget _buildCardSide(String text, BuildContext context) {
     return Container(
-      height: 200,
-      width: 150,
+      height: MediaQuery.of(context).size.height * 0.9,
+      width: MediaQuery.of(context).size.width * 0.8,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,

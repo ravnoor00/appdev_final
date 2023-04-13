@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:makequiz/components/flash_card.dart';
 import 'package:makequiz/models/flashcard.dart';
+import 'package:makequiz/utils.dart';
 import 'home.dart';
 
 class FlashcardTest extends StatefulWidget {
@@ -36,7 +37,9 @@ class _FlashcardTest extends State<FlashcardTest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: yellow,
       appBar: AppBar(
+        backgroundColor: yellow,
           title: Text('$_selectedIndex/${widget.flashcards.length}'),
           leading: IconButton(
               onPressed: () => Navigator.push(

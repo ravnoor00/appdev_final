@@ -9,6 +9,7 @@ import '../database_helper.dart';
 import 'feynman.dart';
 import 'flashcards.dart';
 import 'questions.dart';
+import 'match.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -33,7 +34,7 @@ class _Home extends State<Home> {
 
     return Scaffold(
         backgroundColor: yellow,
-        appBar: appBar("Hello, Ravnoor"),
+        appBar: appBar("Hello, Ravnoor", context),
         body: Container(
           margin: const EdgeInsets.all(25),
           child: Column(
@@ -79,13 +80,12 @@ class _Home extends State<Home> {
     List<Widget> noteCardWidgets =
         data.map((questionList) => noteCard(questionList)).toList();
 
-    int crossAxisCount = (w / 450).ceil();
-    return Expanded(
+    return Flexible(
         child: GridView.count(
-      childAspectRatio: 0.75,
+      childAspectRatio: 0.55,
       crossAxisSpacing: 5,
-      mainAxisSpacing: 2,
-      crossAxisCount: crossAxisCount,
+      mainAxisSpacing: 5,
+      crossAxisCount: 2,
       children: noteCardWidgets,
     ));
   }
@@ -95,68 +95,76 @@ class _Home extends State<Home> {
       onTap: () {
         _showModal(context, questionList.questions);
       },
-      child: Column(
+      child: Stack(
         children: [
-          Stack(
-            children: [
-              Card(
-                elevation: 3,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 30),
-                    ...List.generate(
-                      28,
-                      (index) => const Divider(color: Colors.grey, height: 10),
-                    ),
-                  ],
+          Card(
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 30),
+                ...List.generate(
+                  25,
+                  (index) => const Divider(color: Colors.grey, height: 10),
                 ),
-              ),
-              Positioned(
-                top: 10,
-                left: 10,
-                child: Text(
-                  questionList.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: IconButton(
-                  icon: const Icon(Icons.more_vert),
-                  onPressed: () {
-                    showCupertinoModalPopup(
-                      context: context,
-                      builder: (context) => CupertinoActionSheet(
-                        actions: [
-                          CupertinoDialogAction(
-                            child: const Text('Delete Note'),
-                            onPressed: () async {
-                              await dbHelper.deleteRow(questionList.name);
-                              setState(() {});
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          CupertinoDialogAction(
-                            child: const Text('Change Name'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              _showNameChangeDialog(context, questionList);
-                            },
-                          ),
-                        ],
-                        cancelButton: CupertinoDialogAction(
-                          child: const Text('Cancel'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 15,
+            top: 5,
+            bottom: 3,
+            child: Container(
+              width: 2, // Change this value to adjust the thickness of the line
+              color: Colors.red[200],
+            ),
+          ),
+          Positioned(
+            top: 15,
+            left: 30,
+            child: Text(
+              questionList.name,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Positioned(
+            top: 5,
+            right: 5,
+            child: IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: () {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (context) => CupertinoActionSheet(
+                    actions: [
+                      CupertinoDialogAction(
+                        child: const Text('Delete Note'),
+                        onPressed: () async {
+                          await dbHelper.deleteRow(questionList.name);
+                          setState(() {});
+                          Navigator.of(context).pop();
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
-            ],
+                      CupertinoDialogAction(
+                        child: const Text('Change Name'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _showNameChangeDialog(context, questionList);
+                        },
+                      ),
+                    ],
+                    cancelButton: CupertinoDialogAction(
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -164,79 +172,101 @@ class _Home extends State<Home> {
   }
 
   void _showModal(BuildContext context, var questions) {
-    showModalMenu(
-      context,
-      onQuestionsFile: () {
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => QuestionsFlow(questions: questions),
-          ),
-        );
-      },
-      onFlashcards: () {
-        List<Flashcard> flashcards = generateFlashcards(questions);
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FlashcardTest(flashcards: flashcards),
-          ),
-        );
-      },
-      onFeynman: () {
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                FeynmanFlow(questions: questions, currentQuestionIndex: 0),
-          ),
-        );
-      },
-    );
+    showModalMenu(context, onQuestionsFile: () {
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => QuestionsFlow(questions: questions),
+        ),
+      );
+    }, onFlashcards: () {
+      List<Flashcard> flashcards = generateFlashcards(questions);
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FlashcardTest(flashcards: flashcards),
+        ),
+      );
+    }, onFeynman: () {
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              FeynmanFlow(questions: questions, currentQuestionIndex: 0),
+        ),
+      );
+    }, onMatch: () {
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Match(data: questions),
+        ),
+      );
+    });
   }
 
   void _showNameChangeDialog(BuildContext context, QuestionsList questionList) {
     TextEditingController newNameController = TextEditingController();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Change Note Name'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Current name: ${questionList.name}'),
-            const SizedBox(height: 10),
-            TextField(
-              controller: newNameController,
-              decoration: const InputDecoration(
-                labelText: 'New name',
-                border: OutlineInputBorder(),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(20),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Change Note Name',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              Text('Current name: ${questionList.name}'),
+              const SizedBox(height: 10),
+              TextField(
+                controller: newNameController,
+                decoration: const InputDecoration(
+                  labelText: 'New name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  const SizedBox(width: 10),
+                  TextButton(
+                    child: const Text('Save'),
+                    onPressed: () async {
+                      String newName = newNameController.text.trim();
+                      if (newName.isNotEmpty) {
+                        await dbHelper.updateName(questionList.name, newName);
+                        setState(() {});
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: const Text('Save'),
-            onPressed: () async {
-              String newName = newNameController.text.trim();
-              if (newName.isNotEmpty) {
-                await dbHelper.updateName(questionList.name, newName);
-                setState(() {});
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        ],
       ),
     );
   }

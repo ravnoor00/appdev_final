@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +12,9 @@ import 'flashcards.dart';
 import 'package:makequiz/models/flashcard.dart';
 import 'feynman.dart';
 import '../components/study_options.dart';
+import 'package:makequiz/utils.dart';
+import 'home.dart';
+import 'match.dart';
 
 class ImageToText extends StatefulWidget {
   const ImageToText({Key? key}) : super(key: key);
@@ -167,71 +169,81 @@ class _ImageToText extends State<ImageToText> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: yellow,
+        appBar: AppBar(
+            backgroundColor: yellow,
+            title: Text('Questions'),
+            leading: IconButton(
+                onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Home()),
+                    ),
+                icon: const Icon(Icons.home))),
         body: Center(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _takenImages.isEmpty
-                ? const Text('No images selected.')
-                : GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: _takenImages.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 4.0,
-                      crossAxisSpacing: 4.0,
-                    ),
-                    itemBuilder: (BuildContext context, int index) {
-                      return Image.file(_takenImages[index]);
-                    },
-                  ),
-            Text(_responseText),
-            TextField(
-              controller: _courseController,
-              decoration: const InputDecoration(
-                hintText: 'Enter your course',
-                border: InputBorder.none,
-                filled: true,
-                fillColor: Colors.transparent,
-                contentPadding:
-                    EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-              ),
-            ),
-            actions(),
-            const SizedBox(height: 25),
-            !loadingText && !_sendingText
-                ? ElevatedButton(
-                    onPressed: () {
-                      try {
-                        String course = _courseController.text.isEmpty
-                            ? ''
-                            : _courseController.text;
-                        sendRecognizedText(_notes, course).then((_) {
-                          if (!_sendingText) {
-                            _showModal(context);
-                          }
-                        });
-                      } catch (e) {
-                        print('Error while sending recognized text: $e');
-                        // You can also display the error to the user by updating the UI accordingly.
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            30), // Adjust the corner radius as desired
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                _takenImages.isEmpty
+                    ? const Text('No images selected.')
+                    : GridView.builder(
+                        shrinkWrap: true,
+                        itemCount: _takenImages.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 4.0,
+                          crossAxisSpacing: 4.0,
+                        ),
+                        itemBuilder: (BuildContext context, int index) {
+                          return Image.file(_takenImages[index]);
+                        },
                       ),
-                    ),
-                    child: const Text('Get Questions'),
-                  )
-                : const CircularProgressIndicator(),
-          ],
-        ),
-      ),
-    ));
+                Text(_responseText),
+                TextField(
+                  controller: _courseController,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter your course',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    contentPadding: EdgeInsets.only(
+                        left: 15, bottom: 11, top: 11, right: 15),
+                  ),
+                ),
+                actions(),
+                const SizedBox(height: 25),
+                !loadingText && !_sendingText
+                    ? ElevatedButton(
+                        onPressed: () {
+                          try {
+                            String course = _courseController.text.isEmpty
+                                ? ''
+                                : _courseController.text;
+                            sendRecognizedText(_notes, course).then((_) {
+                              if (!_sendingText) {
+                                _showModal(context);
+                              }
+                            });
+                          } catch (e) {
+                            print('Error while sending recognized text: $e');
+                            // You can also display the error to the user by updating the UI accordingly.
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                30), // Adjust the corner radius as desired
+                          ),
+                        ),
+                        child: const Text('Get Questions'),
+                      )
+                    : const CircularProgressIndicator(),
+              ],
+            ),
+          ),
+        ));
   }
 
   void _showModal(BuildContext context) {
@@ -242,34 +254,43 @@ class _ImageToText extends State<ImageToText> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => QuestionsFlow(questions: _questions),
+            builder: (context) => QuestionsFlow(questions: _questions), fullscreenDialog: true,
           ),
         );
       },
       onFlashcards: () {
-     List<Flashcard> flashcards = generateFlashcards(_questions);
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-     builder: (context) => FlashcardTest(flashcards: flashcards),
-          ),
-        );
-      }, onFeynman: () { 
+        List<Flashcard> flashcards = generateFlashcards(_questions);
         Navigator.pop(context);
         Navigator.push(
-            context,
-         MaterialPageRoute(
-          builder: (context) => FeynmanFlow(
-           questions: _questions, currentQuestionIndex: 0),
-                ),
-              );
-       },
+          context,
+          MaterialPageRoute(
+            builder: (context) => FlashcardTest(flashcards: flashcards),
+          ),
+        );
+      },
+      onFeynman: () {
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                FeynmanFlow(questions: _questions, currentQuestionIndex: 0),
+          ),
+        );
+      },
+      onMatch: (){
+         Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Match(data: _questions),
+          ),
+        );
+      }
     );
   }
 
   // ...
-
 
   Widget actions() {
     return Row(
