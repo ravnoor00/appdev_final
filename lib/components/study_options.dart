@@ -1,13 +1,12 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 Future<void> showModalMenu(BuildContext context,
     {required VoidCallback onQuestionsFile, required VoidCallback onFlashcards, required VoidCallback onFeynman, required VoidCallback onMatch}) async {
   showCupertinoModalPopup(
     context: context,
     builder: (BuildContext context) => CupertinoActionSheet(
-      title: const Text('Choose action'),
+      title: const Text('Ways to Study'),
       actions: <Widget>[
         CupertinoActionSheetAction(
           onPressed: onQuestionsFile,

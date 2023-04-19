@@ -90,7 +90,7 @@ class _FlipCard extends State<FlipCard> with SingleTickerProviderStateMixin {
 
   Widget _buildCardSide(String text, BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.9,
+      height: MediaQuery.of(context).size.height * 0.6,
       width: MediaQuery.of(context).size.width * 0.8,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -99,7 +99,7 @@ class _FlipCard extends State<FlipCard> with SingleTickerProviderStateMixin {
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             blurRadius: 6,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -107,7 +107,7 @@ class _FlipCard extends State<FlipCard> with SingleTickerProviderStateMixin {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),

@@ -10,6 +10,9 @@ import 'feynman.dart';
 import 'flashcards.dart';
 import 'questions.dart';
 import 'match.dart';
+import '../components/bookmark.dart';
+import '../components/togglebuttons.dart';
+
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,9 +21,23 @@ class Home extends StatefulWidget {
   State<Home> createState() => _Home();
 }
 
+bool isLoaded = false;
+
 class _Home extends State<Home> {
-  var w;
+  var width;
   late DatabaseHelper dbHelper;
+  int _selectedButtonIndex = 0;
+
+void _onButtonChanged(int index, bool isSelected) {
+  setState(() {
+    if (isSelected) {
+      _selectedButtonIndex = index;
+    } else {
+      _selectedButtonIndex = 0; 
+    }
+  });
+}
+
 
   @override
   void initState() {
@@ -28,17 +45,18 @@ class _Home extends State<Home> {
     dbHelper = DatabaseHelper();
   }
 
+  List topics = ['All', "Bookmarks"];
+
   @override
   Widget build(BuildContext context) {
-    w = MediaQuery.of(context).size.width;
+    width = MediaQuery.of(context).size.width;
 
     return Scaffold(
         backgroundColor: yellow,
         appBar: appBar("Hello, Ravnoor", context),
         body: Container(
           margin: const EdgeInsets.all(25),
-          child: Column(
-              children: [heading(), const SizedBox(height: 50), _fetchData()]),
+          child: Column(children: [heading(), buttons(), _fetchData()]),
         ));
   }
 
@@ -47,7 +65,7 @@ class _Home extends State<Home> {
       alignment: Alignment.topLeft,
       child: Text("My Questions",
           style: TextStyle(
-              fontSize: 45,
+              fontSize: 65,
               fontWeight: FontWeight.w600,
               color: Colors.grey[800])),
     );
@@ -55,7 +73,11 @@ class _Home extends State<Home> {
 
   Widget _fetchData() {
     return FutureBuilder<List<QuestionsList>>(
-      future: dbHelper.queryAllRows(),
+      future: _selectedButtonIndex == 0
+          ? dbHelper.queryAllRows()
+          : _selectedButtonIndex == 1
+              ? dbHelper.queryAllBookMarked()
+              : dbHelper.queryByTopic(topics[_selectedButtonIndex]),
       builder:
           (BuildContext context, AsyncSnapshot<List<QuestionsList>> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -63,10 +85,9 @@ class _Home extends State<Home> {
             return Text('Error: ${snapshot.error}');
           }
           if (snapshot.data!.isEmpty) {
-            return const Center(
-                child: Text('Scan your notes',
+            return const Text('Scan your notes', textAlign: TextAlign.center,
                     style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.w600)));
+                        TextStyle(fontSize: 40, fontWeight: FontWeight.w600));
           }
           return noteCards(snapshot.data!);
         } else {
@@ -74,6 +95,47 @@ class _Home extends State<Home> {
         }
       },
     );
+  }
+
+  Widget buttons() {
+    return isLoaded == true
+        ? Row(
+            children: List.generate(
+                topics.length,
+                (index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal:8.0),
+                  child: CustomToggleButton(
+                    title: topics[index],
+                    onChanged: (isSelected) =>
+                        _onButtonChanged(index, isSelected),
+                    isSelected: _selectedButtonIndex == index)),
+          ))
+        : FutureBuilder<List<String>>(
+            future: dbHelper.getAllTopics(),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+            topics = ['All', 'Bookmarks', ...snapshot.data!];
+                isLoaded = true;
+                return Row(
+                  children: List.generate(
+                      topics.length,
+                      (index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal:8.0),
+                  child: CustomToggleButton(
+                          title: topics[index],
+                          onChanged: (isSelected) =>
+                              _onButtonChanged(index, isSelected),
+                          isSelected: _selectedButtonIndex == index)),
+                ));
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
+          );
   }
 
   Widget noteCards(List<QuestionsList> data) {
@@ -100,7 +162,8 @@ class _Home extends State<Home> {
           Card(
             elevation: 3,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(10),
+              side: const BorderSide(color: Colors.black, width: 1),
             ),
             child: Column(
               children: [
@@ -130,10 +193,22 @@ class _Home extends State<Home> {
             ),
           ),
           Positioned(
-            top: 5,
-            right: 5,
+            top: 6,
+            right: 20,
+            child: CustomBookmarkIcon(
+              initialValue: questionList.isBookmarked,
+              onChanged: (newValue) async {
+                await dbHelper.updateBookmarkedStatus(
+                    questionList.name, newValue);
+                setState(() {});
+              },
+            ),
+          ),
+          Positioned(
+            bottom: -4,
+            right: 1,
             child: IconButton(
-              icon: const Icon(Icons.more_vert),
+              icon: const Icon(Icons.more_horiz),
               onPressed: () {
                 showCupertinoModalPopup(
                   context: context,
@@ -143,7 +218,9 @@ class _Home extends State<Home> {
                         child: const Text('Delete Note'),
                         onPressed: () async {
                           await dbHelper.deleteRow(questionList.name);
-                          setState(() {});
+                          setState(() {
+                            isLoaded = false;
+                          });
                           Navigator.of(context).pop();
                         },
                       ),

@@ -39,14 +39,20 @@ class _FlashcardTest extends State<FlashcardTest> {
     return Scaffold(
       backgroundColor: yellow,
       appBar: AppBar(
-        backgroundColor: yellow,
-          title: Text('$_selectedIndex/${widget.flashcards.length}'),
+          backgroundColor: yellow,
+          title: Text(
+            '$_selectedIndex/${widget.flashcards.length}',
+            style: const TextStyle(
+              color: Colors.black,
+            ),
+          ),
           leading: IconButton(
-              onPressed: () => Navigator.push(
+              onPressed: () => Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const Home()),
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => const Home()),
                   ),
-              icon: const Icon(Icons.home))),
+              icon: const Icon(Icons.home, color: Colors.black, size: 30))),
       body: PageView.builder(
         itemCount: widget.flashcards.length,
         itemBuilder: (BuildContext context, int index) {

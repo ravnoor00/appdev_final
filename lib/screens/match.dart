@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:makequiz/utils.dart';
 import 'dart:async';
+import '../models/griditem.dart';
+import 'home.dart';
 
 class Match extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -74,7 +77,16 @@ class _Match extends State<Match> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Match Game')),
+      appBar: AppBar(
+          backgroundColor: yellow,
+          title: Text('Score: ${_getScore()} || Time: $_elapsedSeconds',
+              style: const TextStyle(color: Colors.black)),
+          leading: IconButton(
+              onPressed: () => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) => const Home()),
+          ),
+              icon: const Icon(Icons.home, color: Colors.black, size: 30))),
       body: isGameOver
           ? _GameOver(
               incorrect: numberIncorrect,
@@ -94,16 +106,6 @@ class _Match extends State<Match> {
             )
           : Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Score: ${_getScore()}"),
-                      Text("Time: $_elapsedSeconds"),
-                    ],
-                  ),
-                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -126,12 +128,16 @@ class _Match extends State<Match> {
       ),
       itemBuilder: (BuildContext context, int index) {
         GridItem item = _gridItems[index];
-        return InkWell(
-          onTap: () => _handleItemClick(item),
-          child: Visibility(
-            visible: !item.isMatched,
-            child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
+        return Theme(
+          data: ThemeData(
+            splashFactory: InkRipple.splashFactory,
+            splashColor: Colors.grey.withOpacity(0.3),
+          ),
+          child: InkWell(
+            onTap: () => _handleItemClick(item),
+            child: Visibility(
+              visible: !item.isMatched,
+              child: Ink(
                 decoration: BoxDecoration(
                   color: item.correct
                       ? Colors.green.shade100
@@ -140,14 +146,18 @@ class _Match extends State<Match> {
                           : (item.notSelected
                               ? Colors.lightBlue
                               : Colors.white)),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(5),
                   border: Border.all(color: Colors.black, width: 1),
                 ),
-                child: Text(
-                  item.content,
-                  style: const TextStyle(fontSize: 16),
-                  textAlign: TextAlign.center,
-                )),
+                child: Center(
+                  child: Text(
+                    item.content,
+                    style: const TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
           ),
         );
       },
@@ -155,7 +165,7 @@ class _Match extends State<Match> {
   }
 
   void _handleItemClick(GridItem item) {
-    if (item.isMatched || !item.notSelected) {
+    if (item.isMatched) {
       return;
     }
 
@@ -165,68 +175,62 @@ class _Match extends State<Match> {
         item.notSelected = false;
       });
     } else {
-      if (_isMatch(_previousSelectedItem!, item)) {
+      if (item == _previousSelectedItem) {
         setState(() {
-          item.correct = true;
-          _previousSelectedItem!.correct = true;
+          _previousSelectedItem = null;
+          item.notSelected = true;
         });
-
-        Future.delayed(const Duration(seconds: 1), () {
-          setState(() {
-            item.isMatched = true;
-            _previousSelectedItem!.isMatched = true;
-            item.correct = false;
-            _previousSelectedItem!.correct = false;
-            _previousSelectedItem = null;
-          });
-        });
+      } else if (_isMatch(_previousSelectedItem!, item)) {
+        _showCorrectColor(_previousSelectedItem!, item);
+        _previousSelectedItem = null;
       } else {
-        setState(() {
-          item.notSelected = false;
-          _previousSelectedItem!.notSelected = false;
-          item.incorrect = true;
-          _previousSelectedItem!.incorrect = true;
-        });
-
-        Future.delayed(const Duration(seconds: 1), () {
-          setState(() {
-            numberIncorrect += 1;
-            item.notSelected = true;
-            _previousSelectedItem!.notSelected = true;
-            item.incorrect = false;
-            _previousSelectedItem!.incorrect = false;
-            _previousSelectedItem = null;
-          });
-        });
+        _showIncorrectColor(_previousSelectedItem!, item);
+        _previousSelectedItem = null;
+        numberIncorrect += 1;
       }
     }
   }
+
+  void _showCorrectColor(GridItem a, GridItem b) {
+    setState(() {
+      a.correct = true;
+      b.correct = true;
+    });
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() {
+        a.isMatched = true;
+        b.isMatched = true;
+        a.correct = false;
+        b.correct = false;
+      });
+    });
+  }
+
+void _showIncorrectColor(GridItem a, GridItem b) {
+    setState(() {
+      a.incorrect = true;
+      b.incorrect = true;
+    });
+
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) {
+        setState(() {
+          a.notSelected = true;
+          b.notSelected = true;
+          a.incorrect = false;
+          b.incorrect = false;
+        });
+      }
+    });
+}
+
 
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
   }
-}
-
-enum GridItemType { question, answer }
-
-class GridItem {
-  GridItemType type;
-  String content;
-  bool isMatched;
-  bool notSelected;
-  bool incorrect;
-  bool correct;
-
-  GridItem({
-    required this.type,
-    required this.content,
-    required this.isMatched,
-    required this.notSelected,
-    this.incorrect = false,
-    this.correct = false, // Add this line
-  });
 }
 
 class _GameOver extends StatelessWidget {

@@ -70,7 +70,7 @@ class _Feynman extends State<Feynman> {
                     fillColor: Colors.transparent,
                     filled: true,
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.send),
+                      icon: const Icon(Icons.send),
                       onPressed: () {
                         setState(() {
                           _submitted = true;
@@ -149,13 +149,17 @@ class _FeynmanFlow extends State<FeynmanFlow> {
       appBar: AppBar(
         backgroundColor: yellow,
           title: Text(
-              'Question ${widget.currentQuestionIndex + 1}/${widget.questions.length} '),
+              'Question ${widget.currentQuestionIndex + 1}/${widget.questions.length}',
+              style: const TextStyle(
+              color: Colors.black,
+            ),),
           leading: IconButton(
-              onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Home()),
-                  ),
-              icon: const Icon(Icons.home))),
+              onPressed: () => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) => const Home()),
+          ),
+
+              icon: const Icon(Icons.home, color: Colors.black, size: 30))),
       body: Feynman(
         question:
             widget.questions[widget.currentQuestionIndex]['question'] ?? '',
@@ -169,7 +173,7 @@ class _FeynmanFlow extends State<FeynmanFlow> {
             children: [
               IconButton(
                 onPressed: _previousQuestion,
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 tooltip: 'Previous Question',
                 disabledColor: Colors.grey,
                 color:
@@ -177,7 +181,7 @@ class _FeynmanFlow extends State<FeynmanFlow> {
               ),
               IconButton(
                 onPressed: _nextQuestion,
-                icon: Icon(Icons.arrow_forward),
+                icon: const Icon(Icons.arrow_forward),
                 tooltip: 'Next Question',
                 disabledColor: Colors.grey,
                 color: widget.currentQuestionIndex < widget.questions.length - 1
