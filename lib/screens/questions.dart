@@ -11,10 +11,12 @@ class QuestionAnswerPage extends StatefulWidget {
   final String answer;
   final int num;
 
-const QuestionAnswerPage(
-    {Key? key, required this.question, required this.answer, required this.num})
-    : super(key: key);
-
+  const QuestionAnswerPage(
+      {Key? key,
+      required this.question,
+      required this.answer,
+      required this.num})
+      : super(key: key);
 
   @override
   State<QuestionAnswerPage> createState() => _QuestionAnswerPage();
@@ -22,14 +24,13 @@ const QuestionAnswerPage(
 
 class _QuestionAnswerPage extends State<QuestionAnswerPage> {
   final TextEditingController _textEditingController = TextEditingController();
-  String _responseText = '';
-  String _hintText = '';
+  List texts = ['', ''];
   bool hintMade = false;
   bool solutionMade = false;
   int _selectedIndex = -1;
   String? hint;
   Future? _hintFuture;
-Future? _solutionFuture;
+  Future? _solutionFuture;
 
   Future<void> getGrades(String userAnswer, String course) async {
     try {
@@ -45,10 +46,11 @@ Future? _solutionFuture;
 
       if (response.statusCode == 200) {
         var suggestion = response.body;
-suggestion = suggestion.substring(
-    suggestion.lastIndexOf(':') + 2, suggestion.lastIndexOf('.') + 1)
-    .replaceAll('\"', "");
-        _responseText = suggestion;
+        suggestion = suggestion
+            .replaceAll('\"', "");
+        setState(() {
+              texts[1] = suggestion;
+        });
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
       }
@@ -60,7 +62,7 @@ suggestion = suggestion.substring(
   Future<void> getHint(String question, String answer) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.206:5001/generate_hint'),
+        Uri.parse('http://192.168.1.247:5001/generate_hint'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'question': question,
@@ -70,11 +72,11 @@ suggestion = suggestion.substring(
 
       if (response.statusCode == 200) {
         var suggestion = response.body;
-suggestion = suggestion.substring(
-    suggestion.lastIndexOf(':') + 2, suggestion.lastIndexOf('.') + 1)
-    .replaceAll('\"', "");
-
-        _hintText = suggestion;
+        suggestion = suggestion
+            .replaceAll('\"', "");
+        setState(() {
+              texts[0] = suggestion;
+        });
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
       }
@@ -87,7 +89,13 @@ suggestion = suggestion.substring(
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('${widget.num + 1}.'),
+       Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          '${widget.num + 1}.',
+          style: const TextStyle(fontSize: 25),
+        ),
+      ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
@@ -105,13 +113,17 @@ suggestion = suggestion.substring(
               fillColor: textField,
               filled: true,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0), // Add curved edges
-                borderSide: const BorderSide(
-                    color: Colors.grey, width: 1.0), // Add a gray border
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(
+                    color: Colors.grey[300]!, width: 2.0), // Increase the border width
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                borderSide:  BorderSide(color: Colors.grey[300]!, width: 2.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide:  BorderSide(color: Colors.grey[300]!, width: 2.0),
               ),
             ),
           ),
@@ -136,64 +148,40 @@ suggestion = suggestion.substring(
   }
 
   Widget showSolution() {
-    if (_responseText != '') {
-      return AnimatedTextKit(animatedTexts: [
-        TypewriterAnimatedText(_responseText, textAlign: TextAlign.center)
-      ]);
-    }
-    if (solutionMade == true) {
-      return LoadingAnimationWidget.staggeredDotsWave(
-        color: redorange,
-        size: 200,
-      );
-    }
     return FutureBuilder(
       future: _solutionFuture,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        solutionMade = true;
         if (snapshot.connectionState == ConnectionState.done) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: AnimatedTextKit(animatedTexts: [
-              TypewriterAnimatedText(_responseText, textAlign: TextAlign.center)
-            ]),
+              TypewriterAnimatedText(texts[1], textAlign: TextAlign.center)
+            ], totalRepeatCount: 1),
           );
         }
         return LoadingAnimationWidget.staggeredDotsWave(
           color: redorange,
-          size: 200,
+          size: 50,
         );
       },
     );
   }
 
   Widget showHint() {
-    if (_hintText != '') {
-      return AnimatedTextKit(animatedTexts: [
-        TypewriterAnimatedText(_hintText, textAlign: TextAlign.center)
-      ]);
-    }
-    if (hintMade == true) {
-      return LoadingAnimationWidget.staggeredDotsWave(
-        color: redorange,
-        size: 200,
-      );
-    }
     return FutureBuilder(
       future: _hintFuture,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        hintMade = true;
         if (snapshot.connectionState == ConnectionState.done) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: AnimatedTextKit(animatedTexts: [
-              TypewriterAnimatedText(_hintText, textAlign: TextAlign.center)
-            ]),
+              TypewriterAnimatedText(texts[0], textAlign: TextAlign.center,)
+            ], totalRepeatCount: 1,),
           );
         }
         return LoadingAnimationWidget.staggeredDotsWave(
           color: redorange,
-          size: 200,
+          size: 50,
         );
       },
     );
@@ -204,13 +192,14 @@ suggestion = suggestion.substring(
       onPressed: () {
         setState(() {
           _selectedIndex = index;
-           if (index == 0 && !hintMade) {
-      _hintFuture = getHint(widget.question, widget.answer);
-      hintMade = true;
-    } else if (index == 1 && !solutionMade) {
-      _solutionFuture = getGrades(_textEditingController.text, widget.answer);
-      solutionMade = true;
-    }
+          if (index == 0 && !hintMade) {
+            _hintFuture = getHint(widget.question, widget.answer);
+            hintMade = true;
+          } else if (index == 1 && !solutionMade) {
+            _solutionFuture =
+                getGrades(_textEditingController.text, widget.answer);
+            solutionMade = true;
+          }
         });
       },
       style: TextButton.styleFrom(
@@ -248,25 +237,21 @@ class _QuestionsFlow extends State<QuestionsFlow> {
     return Scaffold(
       backgroundColor: yellow,
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: yellow,
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
+        title:const Text(
               'Questions',
-              style: TextStyle(fontSize: 24),
+              style: TextStyle(fontSize: 24, color: Colors.black),
             ),
-            SizedBox(height: 4),
-          ],
-        ),
-        bottom: PreferredSize(
+            bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: Container(
-            height: 2,
-            margin: const EdgeInsets.symmetric(horizontal: 32),
+            height: 3,
+            margin: const EdgeInsets.only(left: 125, right: 125, bottom: 10),
             color: redorange,
           ),
         ),
+        leadingWidth: 80,
         leading: IconButton(
           onPressed: () => Navigator.pushReplacement(
             context,
@@ -278,10 +263,12 @@ class _QuestionsFlow extends State<QuestionsFlow> {
       body: ListView.builder(
         itemCount: widget.questions.length,
         itemBuilder: (context, index) {
-          return QuestionAnswerPage(
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            child: QuestionAnswerPage(
               question: widget.questions[index]['question'] ?? '',
               answer: widget.questions[index]['answer'] ?? '',
-              num : index);
+              num: index));
         },
       ),
     );

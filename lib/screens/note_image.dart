@@ -146,6 +146,7 @@ class _ImageToText extends State<ImageToText> {
   }
 
   List<Map<String, dynamic>> stringtoJSON(String reply) {
+    
     RegExp jsonSeparatorPattern = RegExp(r'}\s*,\s*{');
     List<String> jsonStrings = reply.split(jsonSeparatorPattern);
 
@@ -345,22 +346,31 @@ class _ImageToText extends State<ImageToText> {
   }
 
   void _showTopicInputDialog(BuildContext context) {
-    TextEditingController courseController = TextEditingController();
-    TextEditingController courseController2 = TextEditingController();
+  TextEditingController courseController = TextEditingController();
+  TextEditingController courseController2 = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            dialogBackgroundColor: Colors.blueGrey.withOpacity(0.85),
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Theme(
+        data: Theme.of(context).copyWith(
+          dialogBackgroundColor: Colors.blueGrey.withOpacity(0.85),
+        ),
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
           ),
-          child: AlertDialog(
-            title: const Text(
-              'Enter Name',
-              style: TextStyle(color: Colors.white),
-            ),
-            content: Column(children: [
+          title: const Text(
+            'Enter Name',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Name:',
+                style: TextStyle(color: Colors.white),
+              ),
               TextField(
                 controller: courseController,
                 decoration: InputDecoration(
@@ -376,6 +386,11 @@ class _ImageToText extends State<ImageToText> {
                   ),
                 ),
                 style: const TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Topic:',
+                style: TextStyle(color: Colors.white),
               ),
               TextField(
                 controller: courseController2,
@@ -393,46 +408,48 @@ class _ImageToText extends State<ImageToText> {
                 ),
                 style: const TextStyle(color: Colors.white),
               )
-            ]),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  try {
-                    String course = courseController.text.isEmpty
-                        ? ''
-                        : courseController.text;
-                    String topic = courseController2.text.isEmpty
-                        ? ''
-                        : courseController2.text;
-                    sendRecognizedText(_notes, course, topic).then((_) {
-                      if (!_sendingText) {
-                        _showModal();
-                      }
-                    });
-                  } catch (e) {
-                    print('Error while sending recognized text: $e');
-                    // You can also display the error to the user by updating the UI accordingly.
-                  }
-                },
-                child: const Text(
-                  'Confirm',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
             ],
           ),
-        );
-      },
-    );
-  }
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                try {
+                  String course = courseController.text.isEmpty
+                      ? ''
+                      : courseController.text;
+                  String topic = courseController2.text.isEmpty
+                      ? ''
+                      : courseController2.text;
+                  sendRecognizedText(_notes, course, topic).then((_) {
+                    if (!_sendingText) {
+                      _showModal();
+                    }
+                  });
+                } catch (e) {
+                  print('Error while sending recognized text: $e');
+                  // You can also display the error to the user by updating the UI accordingly.
+                }
+              },
+              child: const Text(
+                'Confirm',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 }
