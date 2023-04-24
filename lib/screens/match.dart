@@ -77,6 +77,7 @@ class _Match extends State<Match> {
     }
 
     return Scaffold(
+      backgroundColor: yellow,
       appBar: AppBar(
           backgroundColor: yellow,
           title: Text('Score: ${_getScore()} || Time: $_elapsedSeconds',
@@ -142,17 +143,17 @@ class _Match extends State<Match> {
                   color: item.correct
                       ? Colors.green.shade100
                       : (item.incorrect
-                          ? Colors.red.shade100
+                          ? Colors.deepPurple
                           : (item.notSelected
-                              ? Colors.lightBlue
-                              : Colors.white)),
+                              ? yellow
+                              : redorange)),
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(color: Colors.black, width: 1),
                 ),
                 child: Center(
                   child: Text(
                     item.content,
-                    style: const TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                 ),

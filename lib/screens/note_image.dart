@@ -53,6 +53,7 @@ class _ImageToText extends State<ImageToText> {
       if (_image != null) {
         final recognizedText = await recognizeText(_image!);
         _notes += '$recognizedText + New Page';
+        print(_notes);
         setState(() {
           loadingText = false;
         });
@@ -146,14 +147,12 @@ class _ImageToText extends State<ImageToText> {
   }
 
   List<Map<String, dynamic>> stringtoJSON(String reply) {
-    
     RegExp jsonSeparatorPattern = RegExp(r'}\s*,\s*{');
     List<String> jsonStrings = reply.split(jsonSeparatorPattern);
 
     List<Map<String, dynamic>> jsonObjects = [];
 
     for (String jsonStr in jsonStrings) {
-      // Add curly braces if needed
       if (!jsonStr.startsWith('{')) {
         jsonStr = '{$jsonStr';
       }
@@ -205,13 +204,11 @@ class _ImageToText extends State<ImageToText> {
                             itemCount: _takenImages.length,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: _takenImages.length <= 2
-                                  ? 1
-                                  : 2,
-                              mainAxisSpacing: 10,
-                              crossAxisSpacing: 10,
-                              childAspectRatio: 0.65
-                            ),
+                                    crossAxisCount:
+                                        _takenImages.length <= 2 ? 1 : 2,
+                                    mainAxisSpacing: 10,
+                                    crossAxisSpacing: 10,
+                                    childAspectRatio: 0.65),
                             itemBuilder: (BuildContext context, int index) {
                               return Container(
                                 decoration: BoxDecoration(
@@ -220,7 +217,10 @@ class _ImageToText extends State<ImageToText> {
                                     color: Colors.black,
                                   ),
                                 ),
-                                child: Image.file(_takenImages[index], fit: BoxFit.fill,),
+                                child: Image.file(
+                                  _takenImages[index],
+                                  fit: BoxFit.fill,
+                                ),
                               );
                             },
                           )),
@@ -346,110 +346,129 @@ class _ImageToText extends State<ImageToText> {
   }
 
   void _showTopicInputDialog(BuildContext context) {
-  TextEditingController courseController = TextEditingController();
-  TextEditingController courseController2 = TextEditingController();
+    TextEditingController courseController = TextEditingController();
+    TextEditingController topicController = TextEditingController();
+    GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Theme(
-        data: Theme.of(context).copyWith(
-          dialogBackgroundColor: Colors.blueGrey.withOpacity(0.85),
-        ),
-        child: AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            dialogBackgroundColor: Colors.blueGrey.withOpacity(0.85),
           ),
-          title: const Text(
-            'Enter Name',
-            style: TextStyle(color: Colors.white),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Name:',
-                style: TextStyle(color: Colors.white),
+          child: AlertDialog(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            title: const Text(
+              'Enter Name',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'Name:',
+                      style: TextStyle(color: redorange),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: courseController,
+                    decoration: InputDecoration(
+                      fillColor: textField,
+                      border: const OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.white.withOpacity(0.6)),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a name';
+                      }
+                      return null;
+                    },
+                    style: TextStyle(color: redorange),
+                  ),
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'Topic:',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: topicController,
+                    decoration: InputDecoration(
+                      fillColor: textField,
+                      hintStyle:
+                          TextStyle(color: Colors.white.withOpacity(0.6)),
+                      border: const OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.white.withOpacity(0.6)),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a topic';
+                      }
+                      return null;
+                    },
+                    style: TextStyle(color: redorange),
+                  ),
+                ],
               ),
-              TextField(
-                controller: courseController,
-                decoration: InputDecoration(
-                  hintText: 'Name',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
-                  border: const OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.white.withOpacity(0.6)),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.white),
                 ),
-                style: const TextStyle(color: Colors.white),
               ),
-              const SizedBox(height: 10),
-              const Text(
-                'Topic:',
-                style: TextStyle(color: Colors.white),
-              ),
-              TextField(
-                controller: courseController2,
-                decoration: InputDecoration(
-                  hintText: 'Topic',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
-                  border: const OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.white.withOpacity(0.6)),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
+              TextButton(
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    Navigator.of(context).pop();
+                    try {
+                      String course = courseController.text;
+                      String topic = topicController.text;
+                      sendRecognizedText(_notes, course, topic).then((_) {
+                        if (!_sendingText) {
+                          _showModal();
+                        }
+                      });
+                    } catch (e) {
+                      print('Error while sending recognized text: $e');
+                      // You can also display the error to the user by updating the UI accordingly.
+                    }
+                  }
+                },
+                child: const Text(
+                  'Confirm',
+                  style: TextStyle(color: Colors.white),
                 ),
-                style: const TextStyle(color: Colors.white),
-              )
+              ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                try {
-                  String course = courseController.text.isEmpty
-                      ? ''
-                      : courseController.text;
-                  String topic = courseController2.text.isEmpty
-                      ? ''
-                      : courseController2.text;
-                  sendRecognizedText(_notes, course, topic).then((_) {
-                    if (!_sendingText) {
-                      _showModal();
-                    }
-                  });
-                } catch (e) {
-                  print('Error while sending recognized text: $e');
-                  // You can also display the error to the user by updating the UI accordingly.
-                }
-              },
-              child: const Text(
-                'Confirm',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 }

@@ -89,21 +89,23 @@ class _FlipCard extends State<FlipCard> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildCardSide(String text, BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.6,
-      width: MediaQuery.of(context).size.width * 0.8,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
+  return Container(
+    height: MediaQuery.of(context).size.height * 0.6,
+    width: MediaQuery.of(context).size.width * 0.8,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      color: Colors.white,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    alignment: Alignment.center,
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Text(
         text,
         textAlign: TextAlign.center,
@@ -112,6 +114,8 @@ class _FlipCard extends State<FlipCard> with SingleTickerProviderStateMixin {
           fontWeight: FontWeight.bold,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
