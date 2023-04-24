@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:makequiz/components/Sidebar.dart';
 import 'package:makequiz/models/flashcard.dart';
 import '../components/Nav.dart';
 import '../components/study_options.dart';
@@ -56,7 +57,7 @@ void _onButtonChanged(int index, bool isSelected) {
         appBar: appBar("Hello, Ravnoor", context),
         body: Container(
           margin: const EdgeInsets.all(25),
-          child: Column(children: [heading(), buttons(), _fetchData()]),
+          child: Column(children: [heading(), buttons(), _fetchData(), Sidebar()]),
         ));
   }
 
