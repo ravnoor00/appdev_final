@@ -52,19 +52,26 @@ Widget sidebar(BuildContext context) {
             },
           ),
           ListTile(
-            title: const Text('Attendance'),
-            leading: Icon(Icons.calendar_month),
+            title: const Text('Library'),
+            leading: Icon(Icons.book),
             onTap: () {
               Navigator.pop(context);
             },
           ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            child: const Divider(
-              color: Colors.grey,
-              thickness: 0.5,
-            ),
+          ListTile(
+            title: const Text('Help Center'),
+            leading: Icon(Icons.help),
+            onTap: () {
+              Navigator.pop(context);
+            },
           ),
+          // Container(
+          //   margin: EdgeInsets.symmetric(horizontal: 10),
+          //   child: const Divider(
+          //     color: Colors.grey,
+          //     thickness: 0.5,
+          //   ),
+          // ),
           ListTile(
             title: const Text('Settings'),
             leading: Icon(Icons.settings),
