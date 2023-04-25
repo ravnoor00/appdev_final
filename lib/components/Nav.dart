@@ -16,19 +16,6 @@ PreferredSizeWidget? appBar(String title, BuildContext context) {
         padding:
             const EdgeInsets.only(right: 8.0), // Change the value as needed
         child: IconButton(
-          icon: const Icon(Icons.edit, color: Colors.black, size: 30),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const GenerateNotes()),
-            );
-          },
-        ),
-      ),
-      Padding(
-        padding:
-            const EdgeInsets.only(right: 8.0), // Change the value as needed
-        child: IconButton(
           icon: const Icon(Icons.camera_alt_outlined,
               color: Colors.black, size: 30),
           onPressed: () {
