@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:makequiz/screens/generate_notes.dart';
 import '../screens/home.dart';
 import '../screens/note_image.dart';
 import '../screens/profile.dart';
 import '../utils.dart';
+import '../screens/note_image.dart';
 
 Widget sidebar(BuildContext context) {
   var h = MediaQuery.of(context).size.height;
@@ -90,6 +92,19 @@ PreferredSizeWidget? nav(String title, BuildContext context) {
             const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
     centerTitle: true,
     actions: [
+      Padding(
+        padding:
+            const EdgeInsets.only(right: 8.0), // Change the value as needed
+        child: IconButton(
+          icon: const Icon(Icons.edit, color: Colors.black, size: 30),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>  const GenerateNotes()),
+            );
+          },
+        ),
+      ),
       Padding(
           padding:
               const EdgeInsets.only(right: 8.0), // Change the value as needed
