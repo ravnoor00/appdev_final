@@ -112,7 +112,7 @@ class _ImageToText extends State<ImageToText> {
   }
 
   Future<List<Map<String, dynamic>>> sendRecognizedText(
-      String recognizedText, String course, String topic) async {
+      String recognizedText, String name, String topic) async {
     setState(() {
       _sendingText = true;
     });
@@ -131,7 +131,7 @@ class _ImageToText extends State<ImageToText> {
           _responseText = response.body;
           _questions = questions;
         });
-        dbHelper.insertList(QuestionsList(_questions, course, false, topic));
+        dbHelper.insertList(QuestionsList(_questions, name, false, topic));
         isLoaded = false;
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
@@ -346,7 +346,7 @@ class _ImageToText extends State<ImageToText> {
   }
 
   void _showTopicInputDialog(BuildContext context) {
-    TextEditingController courseController = TextEditingController();
+    TextEditingController nameController = TextEditingController();
     TextEditingController topicController = TextEditingController();
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -378,7 +378,7 @@ class _ImageToText extends State<ImageToText> {
                     ),
                   ),
                   TextFormField(
-                    controller: courseController,
+                    controller: nameController,
                     decoration: InputDecoration(
                       fillColor: textField,
                       border: const OutlineInputBorder(),
@@ -447,9 +447,9 @@ class _ImageToText extends State<ImageToText> {
                   if (formKey.currentState!.validate()) {
                     Navigator.of(context).pop();
                     try {
-                      String course = courseController.text;
+                      String name= nameController.text;
                       String topic = topicController.text;
-                      sendRecognizedText(_notes, course, topic).then((_) {
+                      sendRecognizedText(_notes, name, topic).then((_) {
                         if (!_sendingText) {
                           _showModal();
                         }
