@@ -91,7 +91,7 @@ class _GenerateNotes extends State<GenerateNotes> {
 
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  @override
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Flutter Page')),
@@ -101,75 +101,77 @@ class _GenerateNotes extends State<GenerateNotes> {
             padding: EdgeInsets.all(16.0),
             child: Form(
               key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Enter your topic'),
-                  TextFormField(
-                    controller: _nameController,
-                    maxLines: 1,
-                    decoration: _roundedTextFieldDecoration(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a topic';
-                      }
-                      return null;
-                    },
-                  ),
-                  Text('Enter the name'),
-                  TextFormField(
-                    controller: _topicController,
-                    maxLines: 1,
-                    decoration: _roundedTextFieldDecoration(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(_showNotesField
-                          ? 'Paste your notes'
-                          : 'Generate your questions'),
-                      CupertinoSwitch(
-                        value: _showNotesField,
-                        onChanged: (bool value) {
-                          setState(() {
-                            _showNotesField = value;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  _showNotesField
-                      ? TextFormField(
-                          controller: _notesController,
-                          maxLines:
-                              _notesController.text.length > 80 ? null : 4,
-                          decoration: _roundedTextFieldDecoration(),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please paste your notes';
-                            }
-                            return null;
-                          },
-                        )
-                      : TextFormField(
-                          controller: _questionsController,
-                          maxLines: 2,
-                          decoration: _roundedTextFieldDecoration(),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please generate your questions';
-                            }
-                            return null;
+              child: SingleChildScrollView( // Add SingleChildScrollView here
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Enter your topic'),
+                    TextFormField(
+                      controller: _nameController,
+                      maxLines: 1,
+                      decoration: _roundedTextFieldDecoration(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a topic';
+                        }
+                        return null;
+                      },
+                    ),
+                    Text('Enter the name'),
+                    TextFormField(
+                      controller: _topicController,
+                      maxLines: 1,
+                      decoration: _roundedTextFieldDecoration(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(_showNotesField
+                            ? 'Paste your notes'
+                            : 'Generate your questions'),
+                        CupertinoSwitch(
+                          value: _showNotesField,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _showNotesField = value;
+                            });
                           },
                         ),
-                ],
+                      ],
+                    ),
+                    _showNotesField
+                        ? TextFormField(
+                            controller: _notesController,
+                            maxLines: null
+                                ,
+                            decoration: _roundedTextFieldDecoration(),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please paste your notes';
+                              }
+                              return null;
+                            },
+                          )
+                        : TextFormField(
+                            controller: _questionsController,
+                            maxLines: 2,
+                            decoration: _roundedTextFieldDecoration(),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please generate your questions';
+                              }
+                              return null;
+                            },
+                          ),
+                  ],
+                ),
               ),
             ),
           ),
