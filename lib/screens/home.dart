@@ -54,7 +54,7 @@ void _onButtonChanged(int index, bool isSelected) {
 
     return Scaffold(
         backgroundColor: yellow,
-        appBar: appBar("Hello, Ravnoor", context),
+        appBar: nav("Hello, Ravnoor", context),
         body: Container(
           margin: const EdgeInsets.all(25),
           child: Column(children: [heading(), buttons(), _fetchData(), Sidebar()]),
