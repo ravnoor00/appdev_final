@@ -14,7 +14,6 @@ import 'match.dart';
 import '../components/bookmark.dart';
 import '../components/togglebuttons.dart';
 
-
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -29,16 +28,15 @@ class _Home extends State<Home> {
   late DatabaseHelper dbHelper;
   int _selectedButtonIndex = 0;
 
-void _onButtonChanged(int index, bool isSelected) {
-  setState(() {
-    if (isSelected) {
-      _selectedButtonIndex = index;
-    } else {
-      _selectedButtonIndex = 0; 
-    }
-  });
-}
-
+  void _onButtonChanged(int index, bool isSelected) {
+    setState(() {
+      if (isSelected) {
+        _selectedButtonIndex = index;
+      } else {
+        _selectedButtonIndex = 0;
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -58,7 +56,8 @@ void _onButtonChanged(int index, bool isSelected) {
         drawer: sidebar(context),
         body: Container(
           margin: const EdgeInsets.all(25),
-          child: Column(children: [heading(), buttons(), _fetchData(), Sidebar()]),
+          child:
+              Column(children: [heading(), buttons(), _fetchData(), Sidebar()]),
         ));
   }
 
@@ -87,9 +86,9 @@ void _onButtonChanged(int index, bool isSelected) {
             return Text('Error: ${snapshot.error}');
           }
           if (snapshot.data!.isEmpty) {
-            return const Text('Scan your notes', textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontSize: 40, fontWeight: FontWeight.w600));
+            return const Text('Scan your notes',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 40, fontWeight: FontWeight.w600));
           }
           return noteCards(snapshot.data!);
         } else {
@@ -103,10 +102,10 @@ void _onButtonChanged(int index, bool isSelected) {
     return isLoaded == true
         ? Row(
             children: List.generate(
-                topics.length,
-                (index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal:8.0),
-                  child: CustomToggleButton(
+            topics.length,
+            (index) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: CustomToggleButton(
                     title: topics[index],
                     onChanged: (isSelected) =>
                         _onButtonChanged(index, isSelected),
@@ -120,14 +119,14 @@ void _onButtonChanged(int index, bool isSelected) {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
-            topics = ['All', 'Bookmarks', ...snapshot.data!];
+                topics = ['All', 'Bookmarks', ...snapshot.data!];
                 isLoaded = true;
                 return Row(
-                  children: List.generate(
-                      topics.length,
-                      (index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal:8.0),
-                  child: CustomToggleButton(
+                    children: List.generate(
+                  topics.length,
+                  (index) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: CustomToggleButton(
                           title: topics[index],
                           onChanged: (isSelected) =>
                               _onButtonChanged(index, isSelected),

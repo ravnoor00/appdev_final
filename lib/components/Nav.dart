@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:makequiz/screens/generate_notes.dart';
+import 'package:makequiz/screens/library.dart';
 import '../screens/home.dart';
 import '../screens/note_image.dart';
 import '../screens/profile.dart';
 import '../utils.dart';
 import '../screens/note_image.dart';
+import '../screens/library.dart';
 
 Widget sidebar(BuildContext context) {
   var h = MediaQuery.of(context).size.height;
@@ -55,7 +57,7 @@ Widget sidebar(BuildContext context) {
             title: const Text('Library'),
             leading: Icon(Icons.book),
             onTap: () {
-              Navigator.pop(context);
+              navigate(context, Library());
             },
           ),
           ListTile(
@@ -106,7 +108,7 @@ PreferredSizeWidget? nav(String title, BuildContext context) {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) =>  const GenerateNotes()),
+              MaterialPageRoute(builder: (context) => const GenerateNotes()),
             );
           },
         ),
