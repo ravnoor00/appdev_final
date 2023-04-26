@@ -51,14 +51,15 @@ class _Home extends State<Home> {
     width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: yellow,
-        appBar: nav("Hello, Ravnoor", context),
-        drawer: sidebar(context),
-        body: Container(
-          margin: const EdgeInsets.all(25),
-          child:
-              Column(children: [heading(), buttons(), _fetchData(), Sidebar()]),
-        ));
+          backgroundColor: yellow,
+          appBar: nav("Hello, Ravnoor", context),
+          drawer: sidebar(context),
+          body: Container(
+            margin: const EdgeInsets.all(25),
+            child:
+                Column(children: [heading(), buttons(), _fetchData(), Sidebar()]),
+          ),
+    );
   }
 
   Widget heading() {

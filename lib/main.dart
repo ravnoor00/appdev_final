@@ -1,24 +1,13 @@
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:makequiz/screens/home.dart';
-import 'firebase_options.dart';
 import 'screens/note_image.dart';
 import 'screens/profile.dart';
 import 'utils.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
 
 
-Future<void> main() async {
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    print('It worked');
-  } catch (e) {
-    print(e);
-  }
+main() {
   runApp(const MyApp());
 }
 

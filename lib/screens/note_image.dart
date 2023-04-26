@@ -390,7 +390,7 @@ class _ImageToText extends State<ImageToText> {
               borderRadius: BorderRadius.all(Radius.circular(20.0)),
             ),
             title: const Text(
-              'Enter Name',
+              'Enter the name and topic',
               style: TextStyle(color: Colors.white),
             ),
             content: Form(
@@ -398,11 +398,11 @@ class _ImageToText extends State<ImageToText> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
                       'Name:',
-                      style: TextStyle(color: redorange),
+                       style: TextStyle(color: Colors.white),
                     ),
                   ),
                   TextFormField(

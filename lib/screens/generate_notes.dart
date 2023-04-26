@@ -14,6 +14,7 @@ import '../components/study_options.dart';
 import 'package:makequiz/utils.dart';
 import 'match.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import '../components/Nav.dart';
 
 class GenerateNotes extends StatefulWidget {
   const GenerateNotes({Key? key}) : super(key: key);
@@ -102,7 +103,14 @@ class _GenerateNotes extends State<GenerateNotes> {
  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Flutter Page')),
+      backgroundColor: yellow,
+      
+      appBar: AppBar(
+        title: const Text('Generate your Own Questions'),
+        foregroundColor: Colors.black,
+        backgroundColor: yellow,
+        ),
+        drawer: sidebar(context),
       body: Stack(
         children: [
         AbsorbPointer(
@@ -116,34 +124,39 @@ class _GenerateNotes extends State<GenerateNotes> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Enter your topic'),
-                    TextFormField(
-                      controller: _nameController,
-                      maxLines: 1,
-                      decoration: _roundedTextFieldDecoration(),
-                       validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a name';
-                    }
-                    return _nameError;
-                  },
-                  onChanged: (value) {
-                    _checkName(value);
-                  },
+                    const Text('Enter your Name'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TextFormField(
+                        controller: _nameController,
+                        maxLines: 1,
+                        decoration: _roundedTextFieldDecoration(),
+                         validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a name';
+                      }
+                      return _nameError;
+                    },
+                    onChanged: (value) {
+                      _checkName(value);
+                    },
+                      ),
                     ),
-                    Text('Enter the name'),
-                    TextFormField(
-                      controller: _topicController,
-                      maxLines: 1,
-                      decoration: _roundedTextFieldDecoration(),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null;
-                      },
+                   const Text('Enter the Topic'),
+                     Padding( // Add padding here
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TextFormField(
+                        controller: _topicController,
+                        maxLines: 1,
+                        decoration: _roundedTextFieldDecoration(),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your name';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
-                    SizedBox(height: 16.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -161,28 +174,34 @@ class _GenerateNotes extends State<GenerateNotes> {
                       ],
                     ),
                     _showNotesField
-                        ? TextFormField(
-                            controller: _notesController,
-                            maxLines: null
-                                ,
-                            decoration: _roundedTextFieldDecoration(),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please paste your notes';
-                              }
-                              return null;
-                            },
+                        ? Padding( // Add padding here
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: TextFormField(
+                              controller: _notesController,
+                              maxLines: null
+                                  ,
+                              decoration: _roundedTextFieldDecoration(),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please paste your notes';
+                                }
+                                return null;
+                              },
+                            ),
                           )
-                        : TextFormField(
-                            controller: _questionsController,
-                            maxLines: 2,
-                            decoration: _roundedTextFieldDecoration(),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please generate your questions';
-                              }
-                              return null;
-                            },
+                        : Padding( // Add padding here
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: TextFormField(
+                              controller: _questionsController,
+                              maxLines: 2,
+                              decoration: _roundedTextFieldDecoration(),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please generate your questions';
+                                }
+                                return null;
+                              },
+                            ),
                           ),
                   ],
                 ),
