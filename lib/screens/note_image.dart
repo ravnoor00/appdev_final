@@ -15,6 +15,7 @@ import 'feynman.dart';
 import '../components/study_options.dart';
 import 'package:makequiz/utils.dart';
 import 'match.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ImageToText extends StatefulWidget {
   const ImageToText({Key? key}) : super(key: key);
@@ -227,7 +228,7 @@ class _ImageToText extends State<ImageToText> {
                           )),
                 !loadingText && !_sendingText
                     ? actions()
-                    : const CircularProgressIndicator(),
+                    : LoadingAnimationWidget.threeArchedCircle(color: redorange, size: 125)
               ],
             ),
           ),
@@ -359,12 +360,30 @@ class _ImageToText extends State<ImageToText> {
     TextEditingController topicController = TextEditingController();
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+      InputDecoration curvedTextFieldDecoration() {
+    return InputDecoration(
+      fillColor: textField,
+      filled: true,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        borderSide: BorderSide(color: Colors.white.withOpacity(0.6)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        borderSide: const BorderSide(color: Colors.white),
+      ),
+    );
+  }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Theme(
           data: Theme.of(context).copyWith(
-            dialogBackgroundColor: Colors.blueGrey.withOpacity(0.85),
+            dialogBackgroundColor: Colors.blueGrey,
           ),
           child: AlertDialog(
             shape: const RoundedRectangleBorder(
@@ -388,17 +407,7 @@ class _ImageToText extends State<ImageToText> {
                   ),
                   TextFormField(
                     controller: nameController,
-                    decoration: InputDecoration(
-                      fillColor: textField,
-                      border: const OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.white.withOpacity(0.6)),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                    ),
+                    decoration: curvedTextFieldDecoration(),
                     validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a name';
@@ -420,19 +429,7 @@ class _ImageToText extends State<ImageToText> {
                   ),
                   TextFormField(
                     controller: topicController,
-                    decoration: InputDecoration(
-                      fillColor: textField,
-                      hintStyle:
-                          TextStyle(color: Colors.white.withOpacity(0.6)),
-                      border: const OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.white.withOpacity(0.6)),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                    ),
+                     decoration: curvedTextFieldDecoration(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a topic';

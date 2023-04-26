@@ -32,12 +32,20 @@ class _GenerateNotes extends State<GenerateNotes> {
   final TextEditingController _topicController = TextEditingController();
     bool _showNotesField = true;
   bool _loading = false;
+    String? _nameError;
 
   @override
   void initState() {
     super.initState();
     dbHelper = DatabaseHelper();
   }
+
+    Future<void> _checkName(String name) async {
+  bool nameExists = await dbHelper.isNameExist(name);
+  setState(() {
+    _nameError = nameExists ? 'Name already exists' : null;
+  });
+}
 
   List<Map<String, dynamic>> stringtoJSON(String reply) {
     RegExp jsonSeparatorPattern = RegExp(r'}\s*,\s*{');
@@ -97,6 +105,9 @@ class _GenerateNotes extends State<GenerateNotes> {
       appBar: AppBar(title: Text('Flutter Page')),
       body: Stack(
         children: [
+        AbsorbPointer(
+          absorbing: _loading,
+          child: 
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Form(
@@ -110,12 +121,15 @@ class _GenerateNotes extends State<GenerateNotes> {
                       controller: _nameController,
                       maxLines: 1,
                       decoration: _roundedTextFieldDecoration(),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a topic';
-                        }
-                        return null;
-                      },
+                       validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a name';
+                    }
+                    return _nameError;
+                  },
+                  onChanged: (value) {
+                    _checkName(value);
+                  },
                     ),
                     Text('Enter the name'),
                     TextFormField(
@@ -174,7 +188,7 @@ class _GenerateNotes extends State<GenerateNotes> {
                 ),
               ),
             ),
-          ),
+          )),
           if (_loading) // Show CircularProgressIndicator if _loading is true
             Center(
                 child: LoadingAnimationWidget.threeRotatingDots(
