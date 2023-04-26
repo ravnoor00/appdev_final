@@ -31,6 +31,7 @@ class _ImageToText extends State<ImageToText> {
   String _notes = '';
   bool loadingText = false;
   final List<File> _takenImages = [];
+  String? _nameError;
 
   late DatabaseHelper dbHelper;
 
@@ -299,6 +300,14 @@ class _ImageToText extends State<ImageToText> {
     });
   }
 
+  Future<void> _checkName(String name) async {
+  bool nameExists = await dbHelper.isNameExist(name);
+  setState(() {
+    _nameError = nameExists ? 'Name already exists' : null;
+  });
+}
+
+
   // ...
 
   Widget actions() {
@@ -391,11 +400,14 @@ class _ImageToText extends State<ImageToText> {
                       ),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a name';
-                      }
-                      return null;
-                    },
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a name';
+                    }
+                    return _nameError;
+                  },
+                  onChanged: (value) {
+                    _checkName(value);
+                  },
                     style: TextStyle(color: redorange),
                   ),
                   const SizedBox(height: 10),

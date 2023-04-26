@@ -158,4 +158,12 @@ Future<int> insertList(QuestionsList questionsList) async {
       whereArgs: [oldName],
     );
   }
+  Future<bool> isNameExist(String name) async {
+  Database? db = await database;
+  List<Map<String, dynamic>> result =
+      await db!.query(table, where: '$columnName = ?', whereArgs: [name]);
+
+  return result.isNotEmpty;
+}
+
 }
