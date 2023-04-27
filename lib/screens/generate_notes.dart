@@ -31,9 +31,9 @@ class _GenerateNotes extends State<GenerateNotes> {
   final TextEditingController _questionsController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _topicController = TextEditingController();
-    bool _showNotesField = true;
+  bool _showNotesField = true;
   bool _loading = false;
-    String? _nameError;
+  String? _nameError;
 
   @override
   void initState() {
@@ -41,12 +41,12 @@ class _GenerateNotes extends State<GenerateNotes> {
     dbHelper = DatabaseHelper();
   }
 
-    Future<void> _checkName(String name) async {
-  bool nameExists = await dbHelper.isNameExist(name);
-  setState(() {
-    _nameError = nameExists ? 'Name already exists' : null;
-  });
-}
+  Future<void> _checkName(String name) async {
+    bool nameExists = await dbHelper.isNameExist(name);
+    setState(() {
+      _nameError = nameExists ? 'Name already exists' : null;
+    });
+  }
 
   List<Map<String, dynamic>> stringtoJSON(String reply) {
     RegExp jsonSeparatorPattern = RegExp(r'}\s*,\s*{');
@@ -67,7 +67,6 @@ class _GenerateNotes extends State<GenerateNotes> {
     }
     return jsonObjects;
   }
-
 
   Future<List<Map<String, dynamic>>> sendRecognizedText(
       String recognizedText, String name, String topic) async {
@@ -97,117 +96,180 @@ class _GenerateNotes extends State<GenerateNotes> {
     return _questions;
   }
 
-
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: yellow,
-      
       appBar: AppBar(
         title: const Text('Generate your Own Questions'),
         foregroundColor: Colors.black,
         backgroundColor: yellow,
-        ),
-        drawer: sidebar(context),
+      ),
+      drawer: sidebar(context),
       body: Stack(
         children: [
-        AbsorbPointer(
-          absorbing: _loading,
-          child: 
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView( // Add SingleChildScrollView here
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Enter your Name'),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: TextFormField(
-                        controller: _nameController,
-                        maxLines: 1,
-                        decoration: _roundedTextFieldDecoration(),
-                         validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a name';
-                      }
-                      return _nameError;
-                    },
-                    onChanged: (value) {
-                      _checkName(value);
-                    },
-                      ),
-                    ),
-                   const Text('Enter the Topic'),
-                     Padding( // Add padding here
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: TextFormField(
-                        controller: _topicController,
-                        maxLines: 1,
-                        decoration: _roundedTextFieldDecoration(),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your name';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          AbsorbPointer(
+              absorbing: _loading,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    // Add SingleChildScrollView here
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(_showNotesField
-                            ? 'Paste your notes'
-                            : 'Generate your questions'),
-                        CupertinoSwitch(
-                          value: _showNotesField,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showNotesField = value;
-                            });
-                          },
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(color: Colors.grey[50]!)),
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                       const Text('Name', style:TextStyle(color: Colors.grey, fontSize: 13)), 
+                       const SizedBox(height: 3.0),
+                          TextFormField(
+                            controller: _nameController,
+                            maxLines: 1,
+                            decoration: const InputDecoration(
+                            isDense: true,   
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                          ),
+                                          validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a name';
+                              }
+                              return _nameError;
+                            },
+                            onChanged: (value) {
+                              _checkName(value);
+                            },
+                          ),
+                      ]))),
+                       Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(color: Colors.grey[50]!)),
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Topic', style:TextStyle(color: Colors.grey, fontSize: 13)), 
+                        const SizedBox(height: 3.0),
+                          TextFormField(
+                            controller: _topicController,
+                            maxLines: 1,
+                            decoration: const InputDecoration(
+                            isDense: true,   
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                          ),
+                                          validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a name';
+                              }
+                              return _nameError;
+                            },
+                            onChanged: (value) {
+                              _checkName(value);
+                            },
+                          ),
+                      ]))),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(_showNotesField
+                                ? 'Paste your notes'
+                                : 'Generate your questions'),
+                            CupertinoSwitch(
+                              value: _showNotesField,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  _showNotesField = value;
+                                });
+                              },
+                            ),
+                          ],
                         ),
+                        _showNotesField
+                            ? Padding(
+                                // Add padding here
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: TextFormField(
+                                  controller: _notesController,
+                                  maxLines: null,
+                                  decoration:  InputDecoration(
+                                        fillColor: Colors.white,
+                                        filled: true,
+                          border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
+                      )
+                          ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please paste your notes';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              )
+                            : Padding(
+                                // Add padding here
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: TextFormField(
+                                  controller: _questionsController,
+                                  maxLines: 2,
+                                  decoration: InputDecoration(
+                                        fillColor: Colors.white,
+                                        filled: true,
+                          border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
+                      )
+                          ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please generate your questions';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
                       ],
                     ),
-                    _showNotesField
-                        ? Padding( // Add padding here
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: TextFormField(
-                              controller: _notesController,
-                              maxLines: null
-                                  ,
-                              decoration: _roundedTextFieldDecoration(),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please paste your notes';
-                                }
-                                return null;
-                              },
-                            ),
-                          )
-                        : Padding( // Add padding here
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: TextFormField(
-                              controller: _questionsController,
-                              maxLines: 2,
-                              decoration: _roundedTextFieldDecoration(),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please generate your questions';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          )),
+              )),
           if (_loading) // Show CircularProgressIndicator if _loading is true
             Center(
                 child: LoadingAnimationWidget.threeRotatingDots(
@@ -237,6 +299,38 @@ class _GenerateNotes extends State<GenerateNotes> {
           }
         },
         child: const Icon(Icons.notes),
+      ),
+    );
+  }
+
+  Widget textBox() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(color: Colors.grey[50]!)),
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Name', style:TextStyle(color: Colors.grey)),
+          TextFormField(
+            decoration: InputDecoration(
+              isDense: true,   
+             border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8.0),
+      borderSide: BorderSide(color: Colors.grey[300]!, width: 0.5),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8.0),
+      borderSide: BorderSide(color: Colors.grey[300]!, width: 0.5),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8.0),
+      borderSide: BorderSide(color: Colors.grey[300]!, width: 0.5),
+    )),
+          ),
+        ],
       ),
     );
   }

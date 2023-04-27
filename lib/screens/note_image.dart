@@ -417,7 +417,7 @@ class _ImageToText extends State<ImageToText> {
                   onChanged: (value) {
                     _checkName(value);
                   },
-                    style: TextStyle(color: redorange),
+                    style: TextStyle(color: Colors.black),
                   ),
                   const SizedBox(height: 10),
                   const Padding(
@@ -436,7 +436,7 @@ class _ImageToText extends State<ImageToText> {
                       }
                       return null;
                     },
-                    style: TextStyle(color: redorange),
+                    style: TextStyle(color: Colors.black),
                   ),
                 ],
               ),
