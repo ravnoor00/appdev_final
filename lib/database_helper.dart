@@ -167,3 +167,23 @@ Future<int> insertList(QuestionsList questionsList) async {
 }
 
 }
+
+  List<Map<String, dynamic>> stringtoJSON(String reply) {
+    RegExp jsonSeparatorPattern = RegExp(r'}\s*,\s*{');
+    List<String> jsonStrings = reply.split(jsonSeparatorPattern);
+
+    List<Map<String, dynamic>> jsonObjects = [];
+
+    for (String jsonStr in jsonStrings) {
+      if (!jsonStr.startsWith('{')) {
+        jsonStr = '{$jsonStr';
+      }
+      if (!jsonStr.endsWith('}')) {
+        jsonStr = '$jsonStr}';
+      }
+
+      Map<String, dynamic> jsonObject = jsonDecode(jsonStr);
+      jsonObjects.add(jsonObject);
+    }
+    return jsonObjects;
+  }

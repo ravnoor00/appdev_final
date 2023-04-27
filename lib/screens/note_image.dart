@@ -148,25 +148,7 @@ class _ImageToText extends State<ImageToText> {
     return _questions;
   }
 
-  List<Map<String, dynamic>> stringtoJSON(String reply) {
-    RegExp jsonSeparatorPattern = RegExp(r'}\s*,\s*{');
-    List<String> jsonStrings = reply.split(jsonSeparatorPattern);
 
-    List<Map<String, dynamic>> jsonObjects = [];
-
-    for (String jsonStr in jsonStrings) {
-      if (!jsonStr.startsWith('{')) {
-        jsonStr = '{$jsonStr';
-      }
-      if (!jsonStr.endsWith('}')) {
-        jsonStr = '$jsonStr}';
-      }
-
-      Map<String, dynamic> jsonObject = jsonDecode(jsonStr);
-      jsonObjects.add(jsonObject);
-    }
-    return jsonObjects;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -360,8 +342,9 @@ class _ImageToText extends State<ImageToText> {
     TextEditingController topicController = TextEditingController();
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-      InputDecoration curvedTextFieldDecoration() {
+      InputDecoration curvedTextFieldDecoration(String text) {
     return InputDecoration(
+      hintText: text,
       fillColor: textField,
       filled: true,
       border: OutlineInputBorder(
@@ -383,7 +366,7 @@ class _ImageToText extends State<ImageToText> {
       builder: (BuildContext context) {
         return Theme(
           data: Theme.of(context).copyWith(
-            dialogBackgroundColor: Colors.blueGrey,
+            dialogBackgroundColor: Colors.grey[700],
           ),
           child: AlertDialog(
             shape: const RoundedRectangleBorder(
@@ -400,14 +383,11 @@ class _ImageToText extends State<ImageToText> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      'Name:',
-                       style: TextStyle(color: Colors.white),
-                    ),
                   ),
                   TextFormField(
+                    
                     controller: nameController,
-                    decoration: curvedTextFieldDecoration(),
+                    decoration: curvedTextFieldDecoration('Name'),
                     validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a name';
@@ -422,14 +402,10 @@ class _ImageToText extends State<ImageToText> {
                   const SizedBox(height: 10),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      'Topic:',
-                      style: TextStyle(color: Colors.white),
-                    ),
                   ),
                   TextFormField(
                     controller: topicController,
-                     decoration: curvedTextFieldDecoration(),
+                     decoration: curvedTextFieldDecoration("Topic"),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a topic';

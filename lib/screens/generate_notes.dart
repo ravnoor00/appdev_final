@@ -48,33 +48,41 @@ class _GenerateNotes extends State<GenerateNotes> {
     });
   }
 
-  List<Map<String, dynamic>> stringtoJSON(String reply) {
-    RegExp jsonSeparatorPattern = RegExp(r'}\s*,\s*{');
-    List<String> jsonStrings = reply.split(jsonSeparatorPattern);
-
-    List<Map<String, dynamic>> jsonObjects = [];
-
-    for (String jsonStr in jsonStrings) {
-      if (!jsonStr.startsWith('{')) {
-        jsonStr = '{$jsonStr';
-      }
-      if (!jsonStr.endsWith('}')) {
-        jsonStr = '$jsonStr}';
-      }
-
-      Map<String, dynamic> jsonObject = jsonDecode(jsonStr);
-      jsonObjects.add(jsonObject);
-    }
-    return jsonObjects;
-  }
-
-  Future<List<Map<String, dynamic>>> sendRecognizedText(
+  Future<List<Map<String, dynamic>>> sendNotesText(
       String recognizedText, String name, String topic) async {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.1.247:5001/process_image'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'text': recognizedText}),
+      );
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        List<Map<String, dynamic>> questions = stringtoJSON(response.body);
+        print(questions.toString());
+        setState(() {
+          _responseText = response.body;
+          _questions = questions;
+        });
+        dbHelper.insertList(QuestionsList(_questions, name, false, topic));
+        isLoaded = false;
+      } else {
+        print('Failed to process image. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while processing image: $e');
+    }
+    return _questions;
+  }
+
+  Future<List<Map<String, dynamic>>> sendPromptText(
+      String text, String name, String topic) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.247:5001/generate_questions'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'text': text}),
       );
 
       if (response.statusCode == 200) {
@@ -121,71 +129,83 @@ class _GenerateNotes extends State<GenerateNotes> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(color: Colors.grey[50]!)),
-                        child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                       const Text('Name', style:TextStyle(color: Colors.grey, fontSize: 13)), 
-                       const SizedBox(height: 3.0),
-                          TextFormField(
-                            controller: _nameController,
-                            maxLines: 1,
-                            decoration: const InputDecoration(
-                            isDense: true,   
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                          ),
-                                          validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a name';
-                              }
-                              return _nameError;
-                            },
-                            onChanged: (value) {
-                              _checkName(value);
-                            },
-                          ),
-                      ]))),
-                       Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(color: Colors.grey[50]!)),
-                        child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Topic', style:TextStyle(color: Colors.grey, fontSize: 13)), 
-                        const SizedBox(height: 3.0),
-                          TextFormField(
-                            controller: _topicController,
-                            maxLines: 1,
-                            decoration: const InputDecoration(
-                            isDense: true,   
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                          ),
-                                          validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a name';
-                              }
-                              return _nameError;
-                            },
-                            onChanged: (value) {
-                              _checkName(value);
-                            },
-                          ),
-                      ]))),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0, vertical: 5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    border:
+                                        Border.all(color: Colors.grey[50]!)),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('Name',
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 13)),
+                                      const SizedBox(height: 3.0),
+                                      TextFormField(
+                                        controller: _nameController,
+                                        maxLines: 1,
+                                        decoration: const InputDecoration(
+                                          isDense: true,
+                                          border: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter a name';
+                                          }
+                                          return _nameError;
+                                        },
+                                        onChanged: (value) {
+                                          _checkName(value);
+                                        },
+                                      ),
+                                    ]))),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0, vertical: 5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    border:
+                                        Border.all(color: Colors.grey[50]!)),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('Topic',
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 13)),
+                                      const SizedBox(height: 3.0),
+                                      TextFormField(
+                                        controller: _topicController,
+                                        maxLines: 1,
+                                        decoration: const InputDecoration(
+                                          isDense: true,
+                                          border: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter a name';
+                                          }
+                                          return _nameError;
+                                        },
+                                        onChanged: (value) {
+                                          _checkName(value);
+                                        },
+                                      ),
+                                    ]))),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -210,22 +230,30 @@ class _GenerateNotes extends State<GenerateNotes> {
                                 child: TextFormField(
                                   controller: _notesController,
                                   maxLines: null,
-                                  decoration:  InputDecoration(
-                                        fillColor: Colors.white,
-                                        filled: true,
-                          border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
-                      )
-                          ),
+                                  decoration: InputDecoration(
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[50]!,
+                                            width: 0.5),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[50]!,
+                                            width: 0.5),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[50]!,
+                                            width: 0.5),
+                                      )),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please paste your notes';
@@ -242,21 +270,29 @@ class _GenerateNotes extends State<GenerateNotes> {
                                   controller: _questionsController,
                                   maxLines: 2,
                                   decoration: InputDecoration(
-                                        fillColor: Colors.white,
-                                        filled: true,
-                          border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(color: Colors.grey[50]!, width: 0.5),
-                      )
-                          ),
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[50]!,
+                                            width: 0.5),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[50]!,
+                                            width: 0.5),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[50]!,
+                                            width: 0.5),
+                                      )),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please generate your questions';
@@ -284,53 +320,20 @@ class _GenerateNotes extends State<GenerateNotes> {
             setState(() {
               _loading = true;
             });
-            sendRecognizedText(
-              _showNotesField
-                  ? _notesController.text
-                  : _questionsController.text,
-              _nameController.text,
-              _topicController.text,
-            ).then((_) {
-              setState(() {
-                _loading = false;
-              });
-              _showModal();
-            });
+            _showNotesField
+                ? sendNotesText(_notesController.text, _nameController.text,
+                    _topicController.text)
+                : sendPromptText(_questionsController.text,
+                        _nameController.text, _topicController.text)
+                    .then((_) {
+                    setState(() {
+                      _loading = false;
+                    });
+                    _showModal();
+                  });
           }
         },
         child: const Icon(Icons.notes),
-      ),
-    );
-  }
-
-  Widget textBox() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          border: Border.all(color: Colors.grey[50]!)),
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Name', style:TextStyle(color: Colors.grey)),
-          TextFormField(
-            decoration: InputDecoration(
-              isDense: true,   
-             border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
-      borderSide: BorderSide(color: Colors.grey[300]!, width: 0.5),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
-      borderSide: BorderSide(color: Colors.grey[300]!, width: 0.5),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
-      borderSide: BorderSide(color: Colors.grey[300]!, width: 0.5),
-    )),
-          ),
-        ],
       ),
     );
   }
