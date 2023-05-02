@@ -147,6 +147,7 @@ class _FeynmanFlow extends State<FeynmanFlow> {
     return Scaffold(
       backgroundColor: yellow,
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: yellow,
           title: Text(
               'Question ${widget.currentQuestionIndex + 1}/${widget.questions.length}',

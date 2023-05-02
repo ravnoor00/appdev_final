@@ -79,6 +79,7 @@ class _Match extends State<Match> {
     return Scaffold(
       backgroundColor: yellow,
       appBar: AppBar(
+          elevation: 0,
           backgroundColor: yellow,
           title: Text('Score: ${_getScore()} || Time: $_elapsedSeconds',
               style: const TextStyle(color: Colors.black)),

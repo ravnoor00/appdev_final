@@ -28,7 +28,6 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
   bool hintMade = false;
   bool solutionMade = false;
   int _selectedIndex = -1;
-  String? hint;
   Future? _hintFuture;
   Future? _solutionFuture;
 
@@ -46,11 +45,13 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
 
       if (response.statusCode == 200) {
         var suggestion = response.body;
-        suggestion = suggestion
-            .replaceAll('\"', "");
-        setState(() {
-              texts[1] = suggestion;
-        });
+        suggestion = suggestion.replaceAll('\"', "");
+        if (mounted) {
+          // Check if the widget is still mounted
+          setState(() {
+            texts[1] = suggestion;
+          });
+        }
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
       }
@@ -72,11 +73,12 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
 
       if (response.statusCode == 200) {
         var suggestion = response.body;
-        suggestion = suggestion
-            .replaceAll('\"', "");
-        setState(() {
-              texts[0] = suggestion;
-        });
+        suggestion = suggestion.replaceAll('\"', "");
+    if (mounted) { // Check if the widget is still mounted
+      setState(() {
+        texts[0] = suggestion;
+      });
+    }
       } else {
         print('Failed to process image. Status code: ${response.statusCode}');
       }
@@ -89,13 +91,13 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-       Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          '${widget.num + 1}.',
-          style: const TextStyle(fontSize: 25),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            '${widget.num + 1}.',
+            style: const TextStyle(fontSize: 25),
+          ),
         ),
-      ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
@@ -115,29 +117,42 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
                 borderSide: BorderSide(
-                    color: Colors.grey[300]!, width: 2.0), // Increase the border width
+                    color: Colors.grey[300]!,
+                    width: 2.0), // Increase the border width
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide:  BorderSide(color: Colors.grey[300]!, width: 2.0),
+                borderSide: BorderSide(color: Colors.grey[300]!, width: 2.0),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide:  BorderSide(color: Colors.grey[300]!, width: 2.0),
+                borderSide: BorderSide(color: Colors.grey[300]!, width: 2.0),
               ),
             ),
           ),
         ),
         Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(child: _buildTextButton('Hint', 0)),
-                const Text('|'),
-                Expanded(child: _buildTextButton('Solution/Grade Your Own', 1)),
-              ],
-            )),
+          padding: const EdgeInsets.all(10),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.horizontal(
+              left: Radius.circular(
+                  1000), // Set a large value for the left semi-circular edge
+              right: Radius.circular(
+                  1000), // Set a large value for the right semi-circular edge
+            ),
+            child: Container(
+              color: Colors.grey.shade100, // Set the color to white
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(child: _buildTextButton('Get a Hint', 0)),
+                  Expanded(
+                      child: _buildTextButton('Solution/Grade Yourself', 1)),
+                ],
+              ),
+            ),
+          ),
+        ),
         _selectedIndex == -1
             ? Container()
             : _selectedIndex == 0
@@ -174,9 +189,15 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
         if (snapshot.connectionState == ConnectionState.done) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
-            child: AnimatedTextKit(animatedTexts: [
-              TypewriterAnimatedText(texts[0], textAlign: TextAlign.center,)
-            ], totalRepeatCount: 1,),
+            child: AnimatedTextKit(
+              animatedTexts: [
+                TypewriterAnimatedText(
+                  texts[0],
+                  textAlign: TextAlign.center,
+                )
+              ],
+              totalRepeatCount: 1,
+            ),
           );
         }
         return LoadingAnimationWidget.staggeredDotsWave(
@@ -191,6 +212,10 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
     return TextButton(
       onPressed: () {
         setState(() {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
           _selectedIndex = index;
           if (index == 0 && !hintMade) {
             _hintFuture = getHint(widget.question, widget.answer);
@@ -209,7 +234,6 @@ class _QuestionAnswerPage extends State<QuestionAnswerPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25.0),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       ),
       child: Text(
         text,
@@ -239,11 +263,11 @@ class _QuestionsFlow extends State<QuestionsFlow> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: yellow,
-        title:const Text(
-              'Questions',
-              style: TextStyle(fontSize: 24, color: Colors.black),
-            ),
-            bottom: PreferredSize(
+        title: const Text(
+          'Questions',
+          style: TextStyle(fontSize: 24, color: Colors.black),
+        ),
+        bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: Container(
             height: 3,
@@ -260,17 +284,20 @@ class _QuestionsFlow extends State<QuestionsFlow> {
           icon: const Icon(Icons.home, color: Colors.black, size: 30),
         ),
       ),
-      body: ListView.builder(
-        itemCount: widget.questions.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: QuestionAnswerPage(
-              question: widget.questions[index]['question'] ?? '',
-              answer: widget.questions[index]['answer'] ?? '',
-              num: index));
-        },
+      body: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: widget.questions
+              .map<Widget>((questionData) => QuestionAnswerPage(
+                    question: questionData['question'] ?? '',
+                    answer: questionData['answer'] ?? '',
+                    num: widget.questions.indexOf(questionData),
+                  ))
+              .toList(),
+        ),
       ),
+    ),
     );
   }
 }

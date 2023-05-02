@@ -110,6 +110,7 @@ class _GenerateNotes extends State<GenerateNotes> {
     return Scaffold(
       backgroundColor: yellow,
       appBar: AppBar(
+        elevation: 0,
         title: const Text('Generate your Own Questions'),
         foregroundColor: Colors.black,
         backgroundColor: yellow,
@@ -377,21 +378,4 @@ class _GenerateNotes extends State<GenerateNotes> {
   }
 }
 
-InputDecoration _roundedTextFieldDecoration() {
-  return InputDecoration(
-    fillColor: textField,
-    filled: true,
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
-      borderSide: BorderSide(color: Colors.grey[300]!, width: 2.0),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
-      borderSide: BorderSide(color: Colors.grey[300]!, width: 2.0),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
-      borderSide: BorderSide(color: Colors.grey[300]!, width: 2.0),
-    ),
-  );
-}
+
