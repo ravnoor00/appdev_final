@@ -57,7 +57,7 @@ class _Home extends State<Home> {
           body: Container(
             margin: const EdgeInsets.all(25),
             child:
-                Column(children: [heading(), buttons(), _fetchData(), Sidebar()]),
+                Column(children: [heading(), buttons(), _fetchData()]),
           ),
     );
   }
