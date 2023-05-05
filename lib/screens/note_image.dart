@@ -155,6 +155,7 @@ class _ImageToText extends State<ImageToText> {
     return Scaffold(
         backgroundColor: yellow,
         appBar: AppBar(
+            elevation: 0,
             backgroundColor: yellow,
             title: const Text(
               'Study With Your Own Notes',

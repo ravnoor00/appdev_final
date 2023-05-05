@@ -80,41 +80,40 @@ class _LibraryState extends State<Library> {
   ];
 
   Widget buildItem(HeaderItem item) {
-    return Container(
-      color: Colors.amber,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              item.icon,
-              const SizedBox(width: 5),
-              Text(item.text),
-              const SizedBox(width: 5),
-              Text(item.number),
-            ],
-          ),
-          const Divider(color: Colors.grey)
-        ],
+    return GestureDetector(
+      onTap:() {
+      },
+      child: Container(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                item.icon,
+                const SizedBox(width: 5),
+                Text(item.text),
+                const SizedBox(width: 5),
+                Text(item.number),
+              ],
+            ),
+            const Divider(color: Colors.grey, thickness: 0.2)
+          ],
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: nav("Library", context),
-      drawer: sidebar(context),
-      body: Column(
-        children: [
-          ...headerItems.map((item) => buildItem(item)).toList(),
-          const Divider(
-            color: Colors.grey,
-            thickness: 1,
-          ),
-          ...noteItems.map((item) => buildItem(item)).toList(),
-        ],
-      ),
+    return Column(
+      children: [
+        ...headerItems.map((item) => buildItem(item)).toList(),
+        const Divider(
+          color: Colors.grey,
+          thickness: 1,
+        ),
+        ...noteItems.map((item) => buildItem(item)).toList(),
+      ],
     );
   }
 }

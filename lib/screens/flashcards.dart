@@ -39,6 +39,7 @@ class _FlashcardTest extends State<FlashcardTest> {
     return Scaffold(
       backgroundColor: yellow,
       appBar: AppBar(
+          elevation: 0,
           backgroundColor: yellow,
           title: Text(
             '$_selectedIndex/${widget.flashcards.length}',
