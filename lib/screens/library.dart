@@ -81,10 +81,20 @@ class _LibraryState extends State<Library> {
         color: Colors.grey[500]),
   ];
 
+  void _addNewNote() {
+    setState(() {
+      noteItems.add(HeaderItem(
+          icon: Icon(Icons.book),
+          text: "New Note",
+          number: "0",
+          color: Colors.grey[500]));
+    });
+  }
+
   Widget buildItem(HeaderItem item) {
     return GestureDetector(
       onTap: () {
-        navigate(context, Note() );
+        navigate(context, Note());
       },
       child: Container(
         child: Column(
@@ -121,7 +131,11 @@ class _LibraryState extends State<Library> {
           ...noteItems.map((item) => buildItem(item)).toList(),
         ],
       ),
-      
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addNewNote,
+        child: Icon(Icons.add),
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
     );
   }
 }
