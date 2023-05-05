@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../components/Nav.dart';
+
 class HeaderItem {
   final Icon icon;
   final String text;
@@ -100,15 +102,19 @@ class _LibraryState extends State<Library> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ...headerItems.map((item) => buildItem(item)).toList(),
-        const Divider(
-          color: Colors.grey,
-          thickness: 1,
-        ),
-        ...noteItems.map((item) => buildItem(item)).toList(),
-      ],
+    return Scaffold(
+      appBar: nav("Library", context),
+      drawer: sidebar(context),
+      body: Column(
+        children: [
+          ...headerItems.map((item) => buildItem(item)).toList(),
+          const Divider(
+            color: Colors.grey,
+            thickness: 1,
+          ),
+          ...noteItems.map((item) => buildItem(item)).toList(),
+        ],
+      ),
     );
   }
 }
