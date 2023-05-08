@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../components/Nav.dart';
+
 class Note extends StatefulWidget {
+  final String title;
+  const Note({super.key, required this.title});
   @override
   State<Note> createState() => _descriptionPageState();
 }
@@ -20,7 +24,7 @@ class _descriptionPageState extends State<Note> {
   Widget build(BuildContext context) {
     var appBar = AppBar(backgroundColor: Color(0xff93BBF6));
     return Scaffold(
-      appBar: appBar,
+      appBar: nav(widget.title, context),
       backgroundColor: Color(0xffF6F8FE),
       body: Container(
         height:
@@ -37,7 +41,7 @@ class _descriptionPageState extends State<Note> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Title",
+                            Text(widget.title,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w800,
                                   fontSize: 30,

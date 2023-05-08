@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:makequiz/screens/note.dart';
 
 import '../components/Nav.dart';
@@ -81,6 +82,8 @@ class _LibraryState extends State<Library> {
         color: Colors.grey[500]),
   ];
 
+  bool _isDeleting = false;
+
   void _addNewNote() {
     setState(() {
       noteItems.add(HeaderItem(
@@ -91,10 +94,26 @@ class _LibraryState extends State<Library> {
     });
   }
 
-  Widget buildItem(HeaderItem item) {
+  void _toggleDeleteMode() {
+    setState(() {
+      _isDeleting = !_isDeleting;
+    });
+  }
+
+  void _deleteNote(int index) {
+    setState(() {
+      noteItems.removeAt(index);
+    });
+  }
+
+  Widget buildItem(HeaderItem item, int index) {
     return GestureDetector(
       onTap: () {
-        navigate(context, Note());
+        if (_isDeleting) {
+          _deleteNote(index);
+        } else {
+          navigate(context, Note(title: item.text));
+        }
       },
       child: Container(
         child: Column(
@@ -102,7 +121,12 @@ class _LibraryState extends State<Library> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                item.icon,
+                _isDeleting
+                    ? IconButton(
+                        icon: Icon(Icons.remove_circle_outline, color: Colors.red),
+                        onPressed: () => _deleteNote(index),
+                      )
+                    : item.icon,
                 const SizedBox(width: 5),
                 Text(item.text),
                 const SizedBox(width: 5),
@@ -123,18 +147,31 @@ class _LibraryState extends State<Library> {
       drawer: sidebar(context),
       body: Column(
         children: [
-          ...headerItems.map((item) => buildItem(item)).toList(),
+          ...headerItems.map((item) => buildItem(item, -1)).toList(),
           const Divider(
             color: Colors.grey,
             thickness: 1,
           ),
-          ...noteItems.map((item) => buildItem(item)).toList(),
+          ...noteItems.asMap().entries.map((entry) => buildItem(entry.value, entry.key)).toList(),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addNewNote,
-        child: Icon(Icons.add),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
         backgroundColor: Theme.of(context).primaryColor,
+        children: [
+          SpeedDialChild(
+            child: Icon(Icons.add),
+            backgroundColor: Theme.of(context).primaryColor,
+            onTap: _addNewNote,
+            label: 'Add Note',
+          ),
+          SpeedDialChild(
+            child: Icon(_isDeleting ?  Icons.check : Icons.delete),
+            backgroundColor: Theme.of(context).primaryColor,
+            onTap: _toggleDeleteMode,
+            label: 'Delete Note',
+          ),
+        ],
       ),
     );
   }

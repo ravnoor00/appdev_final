@@ -45,6 +45,7 @@ dependencies:
   path: ^1.8.2
   animated_text_kit: ^4.2.2
   loading_animation_widget: ^1.2.0+4
+  flutter_speed_dial: ^6.2.0
 
 
 dev_dependencies:
