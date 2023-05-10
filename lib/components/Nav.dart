@@ -14,6 +14,7 @@ Widget sidebar(BuildContext context) {
     child: SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             height: 100,
@@ -74,17 +75,17 @@ Widget sidebar(BuildContext context) {
           //     thickness: 0.5,
           //   ),
           // ),
-          ListTile(
-            title: const Text('Settings'),
-            leading: Icon(Icons.settings),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => Text("Settings"),
-                ),
-              );
-            },
-          ),
+          // ListTile(
+          //   title: const Text('Settings'),
+          //   leading: Icon(Icons.settings),
+          //   onTap: () {
+          //     Navigator.of(context).push(
+          //       MaterialPageRoute(
+          //         builder: (context) => Text("Settings"),
+          //       ),
+          //     );
+          //   },
+          // ),
         ],
       ),
     ),
@@ -94,38 +95,27 @@ Widget sidebar(BuildContext context) {
 PreferredSizeWidget? nav(String title, BuildContext context) {
   return AppBar(
     foregroundColor: Colors.grey[700],
-    backgroundColor: yellow,
+    backgroundColor: bgColor,
+    elevation: 0,
     title: Text("$title",
         style:
             const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
     centerTitle: true,
-    actions: [
-      Padding(
-        padding:
-            const EdgeInsets.only(right: 8.0), // Change the value as needed
-        child: IconButton(
-          icon: const Icon(Icons.edit, color: Colors.black, size: 30),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const GenerateNotes()),
-            );
-          },
-        ),
-      ),
-      Padding(
-          padding:
-              const EdgeInsets.only(right: 8.0), // Change the value as needed
-          child: IconButton(
-              icon: const Icon(Icons.camera_alt_outlined,
-                  color: Colors.black, size: 30),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ImageToText()));
-              }))
-    ],
+    // actions: [
+    //   Padding(
+    //     padding:
+    //         const EdgeInsets.only(right: 8.0), // Change the value as needed
+    //     child: IconButton(
+    //       icon: const Icon(Icons.edit, color: Colors.black, size: 30),
+    //       onPressed: () {
+    //         Navigator.push(
+    //           context,
+    //           MaterialPageRoute(builder: (context) => const GenerateNotes()),
+    //         );
+    //       },
+    //     ),
+    //   ),
+    // ],
   );
 }
 

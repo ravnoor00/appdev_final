@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:makequiz/components/Sidebar.dart';
 import 'package:makequiz/models/flashcard.dart';
+import 'package:makequiz/screens/note_image.dart';
 import '../components/Nav.dart';
 import '../components/study_options.dart';
 import '../utils.dart';
@@ -22,6 +23,7 @@ class Home extends StatefulWidget {
 }
 
 bool isLoaded = false;
+int _selectedIndex = 0;
 
 class _Home extends State<Home> {
   var width;
@@ -48,28 +50,54 @@ class _Home extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [home(), const ImageToText()];
     width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-          backgroundColor: yellow,
-          appBar: nav("Hello, Ravnoor", context),
-          drawer: sidebar(context),
-          body: Container(
-            margin: const EdgeInsets.all(25),
-            child:
-                Column(children: [heading(), buttons(), _fetchData()]),
-          ),
+      backgroundColor: bgColor,
+      appBar: nav("", context),
+      drawer: sidebar(context),
+      body: Container(
+        margin: EdgeInsets.all(width * 0.03),
+        child: widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        onTap: _onItemTapped,
+        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.grey[800],
+        currentIndex: _selectedIndex,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.camera_sharp), label: "Camera"),
+        ],
+      ),
     );
   }
 
+  Widget home() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      heading(),
+      const SizedBox(height: 50),
+      buttons(),
+      _fetchData()
+    ]);
+  }
+
   Widget heading() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Text("My Questions",
-          style: TextStyle(
-              fontSize: 65,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800])),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Hello Ravnoor 👋",
+            style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[800])),
+        const SizedBox(height: 10),
+        Text("Today is a good day to learn something new!",
+            style: TextStyle(color: Colors.grey))
+      ],
     );
   }
 
@@ -348,5 +376,11 @@ class _Home extends State<Home> {
         ),
       ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }

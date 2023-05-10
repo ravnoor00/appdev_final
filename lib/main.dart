@@ -1,11 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:makequiz/screens/home.dart';
 import 'screens/note_image.dart';
 import 'screens/profile.dart';
+import 'screens/splash.dart';
 import 'utils.dart';
 import 'package:path_provider/path_provider.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 
 main() {
   runApp(const MyApp());
@@ -17,27 +17,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: appName,
-      home: const MainApp(),
-    );
+        debugShowCheckedModeBanner: false,
+        title: appName,
+        theme: ThemeData(
+          primaryColor: bgColor,
+          textTheme: GoogleFonts.latoTextTheme(
+            Theme.of(context).textTheme,
+          )),
+        home: FutureBuilder<void>(
+            future: _waitThreeSeconds(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Splash();
+              } else {
+                return Home();
+              }
+            }));
   }
-}
 
-class MainApp extends StatefulWidget {
-  const MainApp({Key? key}) : super(key: key);
-
-  @override
-  State<MainApp> createState() => _MainApp();
-}
-
-class _MainApp extends State<MainApp> {
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: yellow,
-      body: const Home(),
-    );
+  Future<void> _waitThreeSeconds() async {
+    await Future.delayed(Duration(seconds: 3));
   }
 }

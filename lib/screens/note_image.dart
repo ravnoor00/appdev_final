@@ -153,19 +153,7 @@ class _ImageToText extends State<ImageToText> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: yellow,
-        appBar: AppBar(
-            elevation: 0,
-            backgroundColor: yellow,
-            title: const Text(
-              'Study With Your Own Notes',
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
-            leading: IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.home, color: Colors.black, size: 30))),
+        backgroundColor: bgColor,
         body: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: Center(
