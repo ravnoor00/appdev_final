@@ -94,7 +94,7 @@ Widget sidebar(BuildContext context) {
 
 PreferredSizeWidget? nav(String title, BuildContext context) {
   return AppBar(
-    toolbarHeight: 70,
+    toolbarHeight: 60,
     foregroundColor: Colors.grey[700],
     backgroundColor: bgColor,
     elevation: 1,
