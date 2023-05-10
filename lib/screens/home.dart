@@ -54,11 +54,11 @@ class _Home extends State<Home> {
     width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: bgColor,
+      // backgroundColor: bgColor,
       appBar: nav("", context),
       drawer: sidebar(context),
       body: Container(
-        margin: EdgeInsets.all(width * 0.03),
+        margin: EdgeInsets.only(left: width * 0.03, right: width * 0.03, top: 35),
         child: widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(

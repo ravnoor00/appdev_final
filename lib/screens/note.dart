@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../components/Nav.dart';
 
@@ -6,10 +7,10 @@ class Note extends StatefulWidget {
   final String title;
   const Note({super.key, required this.title});
   @override
-  State<Note> createState() => _descriptionPageState();
+  State<Note> createState() => _NoteState();
 }
 
-class _descriptionPageState extends State<Note> {
+class _NoteState extends State<Note> {
   TextEditingController _notesController = TextEditingController();
 
   @override
@@ -26,6 +27,23 @@ class _descriptionPageState extends State<Note> {
     return Scaffold(
       appBar: nav(widget.title, context),
       backgroundColor: Color(0xffF6F8FE),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.list_view ,
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.black,
+        children: [
+          SpeedDialChild(
+            child: Icon(Icons.add),
+            backgroundColor: Theme.of(context).primaryColor,
+            label: 'Add Note',
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.check),
+            backgroundColor: Theme.of(context).primaryColor,
+            label: 'Delete Note',
+          ),
+        ],
+      ),
       body: Container(
         height:
             (MediaQuery.of(context).size.height - appBar.preferredSize.height),

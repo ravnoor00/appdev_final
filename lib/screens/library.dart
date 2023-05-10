@@ -89,7 +89,7 @@ class _LibraryState extends State<Library> {
       noteItems.add(HeaderItem(
           icon: Icon(Icons.book),
           text: "New Note",
-          number: "0",
+          number: "",
           color: Colors.grey[500]));
     });
   }
@@ -116,6 +116,20 @@ class _LibraryState extends State<Library> {
         }
       },
       child: Container(
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 2,
+              offset: Offset(0, 2), // changes position of shadow
+            ),
+          ],
+        ),
         child: Column(
           children: [
             Row(
@@ -123,14 +137,22 @@ class _LibraryState extends State<Library> {
               children: [
                 _isDeleting
                     ? IconButton(
-                        icon: Icon(Icons.remove_circle_outline, color: Colors.red),
+                        icon: Icon(Icons.remove_circle_outline,
+                            color: Colors.red),
                         onPressed: () => _deleteNote(index),
                       )
                     : item.icon,
-                const SizedBox(width: 5),
-                Text(item.text),
-                const SizedBox(width: 5),
-                Text(item.number),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    item.text,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
               ],
             ),
             const Divider(color: Colors.grey, thickness: 0.2)
@@ -145,19 +167,27 @@ class _LibraryState extends State<Library> {
     return Scaffold(
       appBar: nav("Library", context),
       drawer: sidebar(context),
-      body: Column(
-        children: [
-          ...headerItems.map((item) => buildItem(item, -1)).toList(),
-          const Divider(
-            color: Colors.grey,
-            thickness: 1,
-          ),
-          ...noteItems.asMap().entries.map((entry) => buildItem(entry.value, entry.key)).toList(),
-        ],
+      body: Container(
+        margin: EdgeInsets.only(top: 25),
+        child: Column(
+          children: [
+            // ...headerItems.map((item) => buildItem(item, -1)).toList(),
+            // const Divider(
+            //   color: Colors.grey,
+            //   thickness: 1,
+            // ),
+            ...noteItems
+                .asMap()
+                .entries
+                .map((entry) => buildItem(entry.value, entry.key))
+                .toList(),
+          ],
+        ),
       ),
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
         backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.black,
         children: [
           SpeedDialChild(
             child: Icon(Icons.add),
@@ -166,7 +196,7 @@ class _LibraryState extends State<Library> {
             label: 'Add Note',
           ),
           SpeedDialChild(
-            child: Icon(_isDeleting ?  Icons.check : Icons.delete),
+            child: Icon(_isDeleting ? Icons.check : Icons.delete),
             backgroundColor: Theme.of(context).primaryColor,
             onTap: _toggleDeleteMode,
             label: 'Delete Note',

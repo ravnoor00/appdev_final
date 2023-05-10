@@ -153,14 +153,14 @@ class _ImageToText extends State<ImageToText> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: bgColor,
+        // backgroundColor: bgColor,
         body: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: Center(
             child: Column(
               children: <Widget>[
                 SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.7,
+                    height: MediaQuery.of(context).size.height * 0.65,
                     width: MediaQuery.of(context).size.width * 0.8,
                     child: _takenImages.isEmpty
                         ? const Center(
