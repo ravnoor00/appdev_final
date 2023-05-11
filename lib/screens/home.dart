@@ -5,6 +5,7 @@ import 'package:makequiz/models/flashcard.dart';
 import 'package:makequiz/screens/note_image.dart';
 import '../components/Nav.dart';
 import '../components/study_options.dart';
+import '../firebase_helper.dart';
 import '../utils.dart';
 import '../models/question.dart';
 import '../database_helper.dart';
@@ -58,9 +59,13 @@ class _Home extends State<Home> {
       appBar: nav("", context),
       drawer: sidebar(context),
       body: Container(
-        margin: EdgeInsets.only(left: width * 0.03, right: width * 0.03, top: 35),
+        margin:
+            EdgeInsets.only(left: width * 0.03, right: width * 0.03, top: 35),
         child: widgetOptions.elementAt(_selectedIndex),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        test();
+      }),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         onTap: _onItemTapped,

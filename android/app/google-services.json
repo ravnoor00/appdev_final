@@ -1,40 +1,40 @@
 {
   "project_info": {
-    "project_number": "1021096788999",
-    "project_id": "startup-9d293",
-    "storage_bucket": "startup-9d293.appspot.com"
+    "project_number": "469000873912",
+    "project_id": "study-notes-1abf9",
+    "storage_bucket": "study-notes-1abf9.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1021096788999:android:4b56fc54b5f2b07949d6a2",
+        "mobilesdk_app_id": "1:469000873912:android:cb9b735f34743c0bf2514d",
         "android_client_info": {
           "package_name": "com.example.makequiz"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1021096788999-p01s9ljdu498ait1p9u02tukqrll4lgr.apps.googleusercontent.com",
+          "client_id": "469000873912-nib6r53ree5toa6f4qg4p15k149uh1dp.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDimVntBMU0-ilf7-0ehthzBfsepagIK7E"
+          "current_key": "AIzaSyD0TJTUkuJ0NCcV0LPfeePYUSqhIhKG5xs"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1021096788999-p01s9ljdu498ait1p9u02tukqrll4lgr.apps.googleusercontent.com",
+              "client_id": "469000873912-a980ib2t7h0t4hpu51vb5s501cr9svcc.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1021096788999-schde40c4gt66ob730h7oc0li2q6o4td.apps.googleusercontent.com",
+              "client_id": "469000873912-88ndne9ft961egkk3u3clik3ba0g6tbc.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.startup"
+                "bundle_id": "com.jeffreyli.clubAppV2"
               }
             }
           ]
@@ -43,34 +43,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1021096788999:android:b56d26a93b3cf26e49d6a2",
+        "mobilesdk_app_id": "1:469000873912:android:50bc558e22c4d1f0f2514d",
         "android_client_info": {
-          "package_name": "com.example.startup"
+          "package_name": "com.jeffreyli.clubAppV2"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1021096788999-p01s9ljdu498ait1p9u02tukqrll4lgr.apps.googleusercontent.com",
+          "client_id": "469000873912-nib6r53ree5toa6f4qg4p15k149uh1dp.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDimVntBMU0-ilf7-0ehthzBfsepagIK7E"
+          "current_key": "AIzaSyD0TJTUkuJ0NCcV0LPfeePYUSqhIhKG5xs"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1021096788999-p01s9ljdu498ait1p9u02tukqrll4lgr.apps.googleusercontent.com",
+              "client_id": "469000873912-a980ib2t7h0t4hpu51vb5s501cr9svcc.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1021096788999-schde40c4gt66ob730h7oc0li2q6o4td.apps.googleusercontent.com",
+              "client_id": "469000873912-88ndne9ft961egkk3u3clik3ba0g6tbc.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.startup"
+                "bundle_id": "com.jeffreyli.clubAppV2"
               }
             }
           ]
