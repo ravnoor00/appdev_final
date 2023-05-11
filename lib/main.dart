@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:makequiz/screens/home.dart';
 import 'screens/note_image.dart';
@@ -7,16 +6,10 @@ import 'screens/splash.dart';
 import 'utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+// import 'firebase_options.dart';
 import 'dart:async';
-import 'package:firebase_core_web/firebase_core_web.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(const MyApp());
 }
 
