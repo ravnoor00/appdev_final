@@ -63,9 +63,9 @@ class _Home extends State<Home> {
             EdgeInsets.only(left: width * 0.03, right: width * 0.03, top: 35),
         child: widgetOptions.elementAt(_selectedIndex),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        test();
-      }),
+      // floatingActionButton: FloatingActionButton(onPressed: () {
+      //   Authentication.signInWithGoogle(context: context);
+      // }),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         onTap: _onItemTapped,
@@ -94,7 +94,7 @@ class _Home extends State<Home> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Hello Ravnoor 👋",
+        Text("Hello ${user?.displayName} 👋",
             style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.w600,

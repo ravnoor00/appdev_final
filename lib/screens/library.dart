@@ -3,6 +3,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:makequiz/screens/note.dart';
 
 import '../components/Nav.dart';
+import '../firebase_helper.dart';
 import '../utils.dart';
 
 class HeaderItem {
@@ -26,60 +27,32 @@ class Library extends StatefulWidget {
 }
 
 class _LibraryState extends State<Library> {
-  var headerItems = [
-    HeaderItem(
-        icon: Icon(Icons.star),
-        text: "Starred",
-        number: "7",
-        color: Colors.blue[700]!),
-    HeaderItem(
-        icon: Icon(Icons.archive),
-        text: "Archive",
-        number: "7",
-        color: Colors.yellow[700]!),
-    HeaderItem(
-        icon: Icon(Icons.garage),
-        text: "Trash",
-        number: "7",
-        color: Colors.red[700]!),
-    HeaderItem(
-        icon: Icon(Icons.notifications),
-        text: "Notifications",
-        number: "7",
-        color: Colors.grey[700]!),
-    HeaderItem(
-        icon: Icon(Icons.settings),
-        text: "Settings",
-        number: "7",
-        color: Colors.grey[400]!),
-  ];
-
   var noteItems = [
     HeaderItem(
         icon: Icon(Icons.book),
         text: "Intro to CS",
         number: "7",
         color: Colors.grey[500]!),
-    HeaderItem(
-        icon: Icon(Icons.book),
-        text: "CS for nerds",
-        number: "7",
-        color: Colors.grey[500]),
-    HeaderItem(
-        icon: Icon(Icons.book),
-        text: "how to git",
-        number: "7",
-        color: Colors.grey[500]),
-    HeaderItem(
-        icon: Icon(Icons.book),
-        text: "hi",
-        number: "7",
-        color: Colors.grey[500]),
-    HeaderItem(
-        icon: Icon(Icons.book),
-        text: "notes",
-        number: "7",
-        color: Colors.grey[500]),
+    //   HeaderItem(
+    //       icon: Icon(Icons.book),
+    //       text: "CS for nerds",
+    //       number: "7",
+    //       color: Colors.grey[500]),
+    //   HeaderItem(
+    //       icon: Icon(Icons.book),
+    //       text: "how to git",
+    //       number: "7",
+    //       color: Colors.grey[500]),
+    //   HeaderItem(
+    //       icon: Icon(Icons.book),
+    //       text: "hi",
+    //       number: "7",
+    //       color: Colors.grey[500]),
+    //   HeaderItem(
+    //       icon: Icon(Icons.book),
+    //       text: "notes",
+    //       number: "7",
+    //       color: Colors.grey[500]),
   ];
 
   bool _isDeleting = false;
@@ -112,7 +85,8 @@ class _LibraryState extends State<Library> {
         if (_isDeleting) {
           _deleteNote(index);
         } else {
-          navigate(context, Note(title: item.text));
+          navigate(context,
+              Note(title: item.text, id: item.text.hashCode.toString()));
         }
       },
       child: Container(
@@ -145,7 +119,7 @@ class _LibraryState extends State<Library> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    item.text,
+                    allNotes[index]['title'],
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,

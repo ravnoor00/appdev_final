@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:makequiz/screens/generate_notes.dart';
 import 'package:makequiz/screens/library.dart';
 import '../screens/home.dart';
-import '../screens/note_image.dart';
-import '../screens/profile.dart';
 import '../utils.dart';
-import '../screens/note_image.dart';
-import '../screens/library.dart';
+import 'package:makequiz/firebase_helper.dart';
 
 Widget sidebar(BuildContext context) {
   var h = MediaQuery.of(context).size.height;
@@ -25,18 +21,23 @@ Widget sidebar(BuildContext context) {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(width: 25),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                  const SizedBox(width: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(user!.photoURL!),
+                      ),
+                      const SizedBox(width: 12),
                       Text(
-                        'Ravnoor Bedi',
-                        style: TextStyle(
+                        user?.displayName ?? "Null Name",
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 5),
+                      // SizedBox(height: 5),
                     ],
                   ),
                 ],
@@ -68,24 +69,20 @@ Widget sidebar(BuildContext context) {
               Navigator.pop(context);
             },
           ),
-          // Container(
-          //   margin: EdgeInsets.symmetric(horizontal: 10),
-          //   child: const Divider(
-          //     color: Colors.grey,
-          //     thickness: 0.5,
-          //   ),
-          // ),
-          // ListTile(
-          //   title: const Text('Settings'),
-          //   leading: Icon(Icons.settings),
-          //   onTap: () {
-          //     Navigator.of(context).push(
-          //       MaterialPageRoute(
-          //         builder: (context) => Text("Settings"),
-          //       ),
-          //     );
-          //   },
-          // ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            child: const Divider(
+              color: Colors.grey,
+              thickness: 0.5,
+            ),
+          ),
+          ListTile(
+            title: const Text('Sign Out'),
+            leading: Icon(Icons.settings),
+            onTap: () {
+              Authentication.signOut(context: context);
+            },
+          ),
         ],
       ),
     ),

@@ -2,24 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../components/Nav.dart';
+import '../firebase_helper.dart';
 
 class Note extends StatefulWidget {
   final String title;
-  const Note({super.key, required this.title});
+  final String id;
+  const Note({super.key, required this.title, required this.id});
   @override
   State<Note> createState() => _NoteState();
 }
 
 class _NoteState extends State<Note> {
   TextEditingController _notesController = TextEditingController();
+  int index = -1;
+  String notes = "";
+
+  @override
+  void initState() {
+    super.initState();
+    index = allNotes.indexWhere((note) => note['title'] == widget.title);
+    _notesController = TextEditingController(text: allNotes[index]['notes']);
+  }
 
   @override
   void dispose() {
     _notesController.dispose();
     super.dispose();
   }
-
-  String notes = "";
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +37,7 @@ class _NoteState extends State<Note> {
       appBar: nav(widget.title, context),
       backgroundColor: Color(0xffF6F8FE),
       floatingActionButton: SpeedDial(
-        animatedIcon: AnimatedIcons.list_view ,
+        animatedIcon: AnimatedIcons.list_view,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.black,
         children: [
@@ -88,8 +97,11 @@ class _NoteState extends State<Note> {
                             hintText: 'Enter your notes.',
                           ),
                           onChanged: (text) {
+                            addNote(widget.title, notes, widget.id);
                             setState(() {
                               notes = text;
+
+                              updateNote(widget.title, notes, widget.id);
                             });
                           },
                         ),

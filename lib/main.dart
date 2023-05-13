@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:makequiz/screens/home.dart';
+import 'package:makequiz/screens/login.dart';
 import 'screens/note_image.dart';
 import 'screens/profile.dart';
 import 'screens/splash.dart';
@@ -17,7 +19,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MyApp());
-  test();
+  init();
 }
 
 class MyApp extends StatelessWidget {
@@ -26,22 +28,35 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: appName,
-        theme: ThemeData(
-            primaryColor: bgColor,
-            textTheme: GoogleFonts.latoTextTheme(
-              Theme.of(context).textTheme,
-            )),
-        home: FutureBuilder<void>(
-            future: _waitThreeSeconds(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Splash();
-              } else {
-                return Home();
-              }
-            }));
+      debugShowCheckedModeBanner: false,
+      title: appName,
+      theme: ThemeData(
+          primaryColor: bgColor,
+          textTheme: GoogleFonts.latoTextTheme(
+            Theme.of(context).textTheme,
+          )),
+      home: FutureBuilder<void>(
+        future: _waitThreeSeconds(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Splash();
+          } else {
+            return StreamBuilder<User?>(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasData) {
+                  return Home();
+                } else {
+                  return Login();
+                }
+              },
+            );
+          }
+        },
+      ),
+    );
   }
 
   Future<void> _waitThreeSeconds() async {
