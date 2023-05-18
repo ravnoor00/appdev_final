@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../components/Nav.dart';
-import '../firebase_helper.dart';
 
 class Note extends StatefulWidget {
   final String title;
@@ -18,11 +17,6 @@ class _NoteState extends State<Note> {
   String notes = "";
 
   @override
-  void initState() {
-    super.initState();
-    index = allNotes.indexWhere((note) => note['title'] == widget.title);
-    _notesController = TextEditingController(text: allNotes[index]['notes']);
-  }
 
   @override
   void dispose() {
@@ -97,11 +91,8 @@ class _NoteState extends State<Note> {
                             hintText: 'Enter your notes.',
                           ),
                           onChanged: (text) {
-                            addNote(widget.title, notes, widget.id);
                             setState(() {
                               notes = text;
-
-                              updateNote(widget.title, notes, widget.id);
                             });
                           },
                         ),

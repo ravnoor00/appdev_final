@@ -2,7 +2,7 @@ PODS:
   - camera_avfoundation (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_image_compress (1.0.0):
+  - flutter_image_compress_common (1.0.0):
     - Flutter
     - Mantle
     - SDWebImage
@@ -105,7 +105,7 @@ PODS:
 DEPENDENCIES:
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - Flutter (from `Flutter`)
-  - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
+  - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
   - google_mlkit_commons (from `.symlinks/plugins/google_mlkit_commons/ios`)
   - google_mlkit_text_recognition (from `.symlinks/plugins/google_mlkit_text_recognition/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -138,8 +138,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
   Flutter:
     :path: Flutter
-  flutter_image_compress:
-    :path: ".symlinks/plugins/flutter_image_compress/ios"
+  flutter_image_compress_common:
+    :path: ".symlinks/plugins/flutter_image_compress_common/ios"
   google_mlkit_commons:
     :path: ".symlinks/plugins/google_mlkit_commons/ios"
   google_mlkit_text_recognition:
@@ -154,7 +154,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   camera_avfoundation: 3125e8cd1a4387f6f31c6c63abb8a55892a9eeeb
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_image_compress: 5a5e9aee05b6553048b8df1c3bc456d0afaac433
+  flutter_image_compress_common: ec1d45c362c9d30a3f6a0426c297f47c52007e3e
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   google_mlkit_commons: a4f893c1b9708fc697b2194728013a1ed0f50b6b
   google_mlkit_text_recognition: 362cac55aa703da4c4d2a2955ddc01f1a759057e

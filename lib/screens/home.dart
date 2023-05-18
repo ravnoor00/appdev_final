@@ -5,7 +5,7 @@ import 'package:makequiz/models/flashcard.dart';
 import 'package:makequiz/screens/note_image.dart';
 import '../components/Nav.dart';
 import '../components/study_options.dart';
-import '../firebase_helper.dart';
+
 import '../utils.dart';
 import '../models/question.dart';
 import '../database_helper.dart';
@@ -94,7 +94,7 @@ class _Home extends State<Home> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Hello ${user?.displayName} 👋",
+        Text("Hello Hi 👋",
             style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.w600,

@@ -280,7 +280,7 @@ class _QuestionsFlow extends State<QuestionsFlow> {
           onPressed: () => Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (BuildContext context) => const Home()),
-          ),
+          ), 
           icon: const Icon(Icons.home, color: Colors.black, size: 30),
         ),
       ),

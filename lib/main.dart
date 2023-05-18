@@ -1,25 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:makequiz/screens/home.dart';
-import 'package:makequiz/screens/login.dart';
 import 'screens/note_image.dart';
 import 'screens/profile.dart';
 import 'screens/splash.dart';
 import 'utils.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'dart:async';
-import 'firebase_helper.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(MyApp());
-  init();
 }
 
 class MyApp extends StatelessWidget {
@@ -41,22 +30,11 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Splash();
           } else {
-            return StreamBuilder<User?>(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasData) {
                   return Home();
-                } else {
-                  return Login();
-                }
+                } 
               },
-            );
-          }
-        },
-      ),
-    );
+            )
+      );
   }
 
   Future<void> _waitThreeSeconds() async {

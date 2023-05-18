@@ -9,11 +9,16 @@ import 'models/question.dart';
 class DatabaseHelper {
   static const _databaseName = 'user_questions.db';
   static const _databaseVersion = 1;
-  static const table = 'questions';
+  static const table1 = 'questions';
   static const columnName = 'name';
   static const columnQuestions = 'JSON_questions';
   static const columnBookmarked = 'bookmarked';
   static const columnTopic = 'topic';
+
+   static const table2 = 'notes';
+  static const columnName_notes = 'name';
+  static const columnQuestions_notes = 'JSON_questions';
+  static const columnTopic_notes = 'topic';
 
   // Singleton instance
   static DatabaseHelper? _instance;
@@ -43,11 +48,18 @@ class DatabaseHelper {
 
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-    CREATE TABLE $table (
+    CREATE TABLE $table1 (
       $columnName TEXT NOT NULL,
       $columnQuestions TEXT NOT NULL,
       $columnBookmarked INTEGER NOT NULL,
       $columnTopic TEXT NOT NULL
+    )
+  ''');
+      await db.execute('''
+    CREATE TABLE $table2 (
+      $columnName_notes TEXT NOT NULL,
+      $columnQuestions_notes TEXT NOT NULL,
+      $columnTopic_notes TEXT NOT NULL
     )
   ''');
   }
@@ -62,7 +74,7 @@ Future<int> insertList(QuestionsList questionsList) async {
         questionsList.isBookmarked ? 1 : 0, // Convert bool to int
     columnTopic: questionsList.topic,
   };
-  return await db!.insert(table, row);
+  return await db!.insert(table1, row);
 }
 
 
@@ -70,7 +82,7 @@ Future<int> insertList(QuestionsList questionsList) async {
   Database? db = await database;
 
   List<Map<String, dynamic>> result = await db!.query(
-    table,
+    table1,
     columns: [columnTopic],
     groupBy: columnTopic,
   );
@@ -85,7 +97,7 @@ Future<int> insertList(QuestionsList questionsList) async {
     List<dynamic>? whereArgs = [topic];
 
     List<Map<String, dynamic>> result =
-        await db!.query(table, where: whereClause, whereArgs: whereArgs);
+        await db!.query(table1, where: whereClause, whereArgs: whereArgs);
     return result.map((row) {
     final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
         .map((e) => Map<String, dynamic>.from(e))
@@ -99,7 +111,7 @@ Future<int> insertList(QuestionsList questionsList) async {
 
   Future<List<QuestionsList>> queryAllRows() async {
     Database? db = await database;
-    List<Map<String, dynamic>> result = await db!.query(table);
+    List<Map<String, dynamic>> result = await db!.query(table1);
   return result.map((row) {
     final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
         .map((e) => Map<String, dynamic>.from(e))
@@ -117,7 +129,7 @@ Future<int> insertList(QuestionsList questionsList) async {
     List<dynamic>? whereArgs = [1];
 
     List<Map<String, dynamic>> result =
-        await db!.query(table, where: whereClause, whereArgs: whereArgs);
+        await db!.query(table1, where: whereClause, whereArgs: whereArgs);
     return result.map((row) {
     final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
         .map((e) => Map<String, dynamic>.from(e))
@@ -132,7 +144,7 @@ Future<int> insertList(QuestionsList questionsList) async {
   Future<void> updateBookmarkedStatus(String name, bool isBookmarked) async {
     Database? db = await database;
     await db!.update(
-      table,
+      table1,
       {columnBookmarked: isBookmarked ? 1 : 0},
       where: '$columnName = ?',
       whereArgs: [name],
@@ -141,18 +153,18 @@ Future<int> insertList(QuestionsList questionsList) async {
 
   Future<void> deleteRow(String name) async {
     Database? db = await database;
-    await db!.delete(table, where: '$columnName = ?', whereArgs: [name]);
+    await db!.delete(table1, where: '$columnName = ?', whereArgs: [name]);
   }
 
     Future<void> deleteTopic(String topic) async {
     Database? db = await database;
-    await db!.delete(table, where: '$columnName = ?', whereArgs: [topic]);
+    await db!.delete(table1, where: '$columnName = ?', whereArgs: [topic]);
   }
 
   Future<void> updateName(String oldName, String newName) async {
     Database? db = await database;
     await db!.update(
-      table,
+      table1,
       {columnName: newName},
       where: '$columnName = ?',
       whereArgs: [oldName],
@@ -161,7 +173,7 @@ Future<int> insertList(QuestionsList questionsList) async {
   Future<bool> isNameExist(String name) async {
   Database? db = await database;
   List<Map<String, dynamic>> result =
-      await db!.query(table, where: '$columnName = ?', whereArgs: [name]);
+      await db!.query(table1, where: '$columnName = ?', whereArgs: [name]);
 
   return result.isNotEmpty;
 }

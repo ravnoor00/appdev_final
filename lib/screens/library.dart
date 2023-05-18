@@ -3,7 +3,6 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:makequiz/screens/note.dart';
 
 import '../components/Nav.dart';
-import '../firebase_helper.dart';
 import '../utils.dart';
 
 class HeaderItem {
@@ -119,7 +118,7 @@ class _LibraryState extends State<Library> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    allNotes[index]['title'],
+                    "title",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,

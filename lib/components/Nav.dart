@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:makequiz/screens/library.dart';
 import '../screens/home.dart';
 import '../utils.dart';
-import 'package:makequiz/firebase_helper.dart';
 
 Widget sidebar(BuildContext context) {
   var h = MediaQuery.of(context).size.height;
@@ -27,11 +26,11 @@ Widget sidebar(BuildContext context) {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        backgroundImage: NetworkImage(user!.photoURL!),
+                        // backgroundImage: NetworkImage(user!.photoURL!),
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        user?.displayName ?? "Null Name",
+                        "Ravnoor Bedi",
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -80,7 +79,6 @@ Widget sidebar(BuildContext context) {
             title: const Text('Sign Out'),
             leading: Icon(Icons.settings),
             onTap: () {
-              Authentication.signOut(context: context);
             },
           ),
         ],
