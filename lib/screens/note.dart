@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-
+import 'package:makequiz/models/notes.dart';
 import '../components/Nav.dart';
 
 class Note extends StatefulWidget {
-  final String title;
-  final String id;
-  const Note({super.key, required this.title, required this.id});
+  final Notes note;
+  const Note({super.key, required this.note});
   @override
   State<Note> createState() => _NoteState();
 }
 
 class _NoteState extends State<Note> {
-  TextEditingController _notesController = TextEditingController();
-  int index = -1;
-  String notes = "";
+  final TextEditingController _notesController = TextEditingController();
+  String notes = '';
 
   @override
-
   @override
   void dispose() {
     _notesController.dispose();
@@ -28,7 +25,7 @@ class _NoteState extends State<Note> {
   Widget build(BuildContext context) {
     var appBar = AppBar(backgroundColor: Color(0xff93BBF6));
     return Scaffold(
-      appBar: nav(widget.title, context),
+      appBar: nav(widget.note.name, context),
       backgroundColor: Color(0xffF6F8FE),
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.list_view,
@@ -62,7 +59,7 @@ class _NoteState extends State<Note> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(widget.title,
+                            Text(widget.note.name,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w800,
                                   fontSize: 30,

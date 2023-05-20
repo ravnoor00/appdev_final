@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:makequiz/screens/note.dart';
-
+import 'package:makequiz/models/question.dart';
 import '../components/Nav.dart';
+import '../models/notes.dart';
 import '../utils.dart';
 
 class HeaderItem {
@@ -84,8 +85,14 @@ class _LibraryState extends State<Library> {
         if (_isDeleting) {
           _deleteNote(index);
         } else {
-          navigate(context,
-              Note(title: item.text, id: item.text.hashCode.toString()));
+          navigate(
+              context,
+              Note(
+                  note: Notes(
+                      notes: "Hi Mister",
+                      name: "random",
+                      topic: "Hi",
+                    )));
         }
       },
       child: Container(

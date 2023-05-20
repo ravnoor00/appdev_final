@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:convert';
 import 'models/question.dart';
+import 'models/notes.dart';
 
 class DatabaseHelper {
   static const _databaseName = 'user_questions.db';
@@ -15,10 +16,11 @@ class DatabaseHelper {
   static const columnBookmarked = 'bookmarked';
   static const columnTopic = 'topic';
 
-   static const table2 = 'notes';
-  static const columnName_notes = 'name';
-  static const columnQuestions_notes = 'JSON_questions';
-  static const columnTopic_notes = 'topic';
+  static const table2 = 'notes';
+  static const columnNotesName = 'name';
+  static const columnNotesQuestions = 'JSON_questions';
+  static const columnNotesTopic = 'topic';
+  static const columnNotes = '';
 
   // Singleton instance
   static DatabaseHelper? _instance;
@@ -55,41 +57,52 @@ class DatabaseHelper {
       $columnTopic TEXT NOT NULL
     )
   ''');
-      await db.execute('''
+    await db.execute('''
     CREATE TABLE $table2 (
-      $columnName_notes TEXT NOT NULL,
-      $columnQuestions_notes TEXT NOT NULL,
-      $columnTopic_notes TEXT NOT NULL
+      $columnNotesName TEXT NOT NULL,
+      $columnNotesQuestions TEXT NOT NULL,
+      $columnNotesTopic TEXT NOT NULL
+      $columnNotes TEXT NOT NULL
     )
   ''');
   }
 
-Future<int> insertList(QuestionsList questionsList) async {
-  Database? db = await database;
-  final jsonString = jsonEncode(questionsList.questions);
-  final row = {
-    columnName: questionsList.name,
-    columnQuestions: jsonString,
-    columnBookmarked:
-        questionsList.isBookmarked ? 1 : 0, // Convert bool to int
-    columnTopic: questionsList.topic,
-  };
-  return await db!.insert(table1, row);
-}
+  Future<int> insertList(QuestionsList questionsList) async {
+    Database? db = await database;
+    final jsonString = jsonEncode(questionsList.questions);
+    final row = {
+      columnName: questionsList.name,
+      columnQuestions: jsonString,
+      columnBookmarked:
+          questionsList.isBookmarked ? 1 : 0, // Convert bool to int
+      columnTopic: questionsList.topic,
+    };
+    return await db!.insert(table1, row);
+  }
 
+  Future<int> insertNotes(Notes note) async {
+    Database? db = await database;
+    insertList(note.questions!);
+    final row = {
+      columnNotesName: note.name,
+      columnQuestions: note.questions?.name ?? '',
+      columnNotesTopic: note.topic,
+      columnNotes: note.notes
+    };
+    return await db!.insert(table2, row);
+  }
 
   Future<List<String>> getAllTopics() async {
-  Database? db = await database;
+    Database? db = await database;
 
-  List<Map<String, dynamic>> result = await db!.query(
-    table1,
-    columns: [columnTopic],
-    groupBy: columnTopic,
-  );
+    List<Map<String, dynamic>> result = await db!.query(
+      table1,
+      columns: [columnTopic],
+      groupBy: columnTopic,
+    );
 
-  return result.map((row) => row[columnTopic] as String).toList();
-}
-
+    return result.map((row) => row[columnTopic] as String).toList();
+  }
 
   Future<List<QuestionsList>> queryByTopic(String topic) async {
     Database? db = await database;
@@ -99,28 +112,28 @@ Future<int> insertList(QuestionsList questionsList) async {
     List<Map<String, dynamic>> result =
         await db!.query(table1, where: whereClause, whereArgs: whereArgs);
     return result.map((row) {
-    final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
-        .map((e) => Map<String, dynamic>.from(e))
-        .toList();
-    final name = row[columnName] as String;
-    final bookmarked = row[columnBookmarked] == 1; // Convert int to bool
-    final topic = row[columnTopic] as String;
-    return QuestionsList(questions, name, bookmarked, topic);
-  }).toList();
+      final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+      final name = row[columnName] as String;
+      final bookmarked = row[columnBookmarked] == 1; // Convert int to bool
+      final topic = row[columnTopic] as String;
+      return QuestionsList(questions, name, bookmarked, topic);
+    }).toList();
   }
 
   Future<List<QuestionsList>> queryAllRows() async {
     Database? db = await database;
     List<Map<String, dynamic>> result = await db!.query(table1);
-  return result.map((row) {
-    final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
-        .map((e) => Map<String, dynamic>.from(e))
-        .toList();
-    final name = row[columnName] as String;
-    final bookmarked = row[columnBookmarked] == 1; // Convert int to bool
-    final topic = row[columnTopic] as String;
-    return QuestionsList(questions, name, bookmarked, topic);
-  }).toList();
+    return result.map((row) {
+      final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+      final name = row[columnName] as String;
+      final bookmarked = row[columnBookmarked] == 1; // Convert int to bool
+      final topic = row[columnTopic] as String;
+      return QuestionsList(questions, name, bookmarked, topic);
+    }).toList();
   }
 
   Future<List<QuestionsList>> queryAllBookMarked() async {
@@ -131,14 +144,14 @@ Future<int> insertList(QuestionsList questionsList) async {
     List<Map<String, dynamic>> result =
         await db!.query(table1, where: whereClause, whereArgs: whereArgs);
     return result.map((row) {
-    final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
-        .map((e) => Map<String, dynamic>.from(e))
-        .toList();
-    final name = row[columnName] as String;
-    final bookmarked = row[columnBookmarked] == 1; // Convert int to bool
-    final topic = row[columnTopic] as String;
-    return QuestionsList(questions, name, bookmarked, topic);
-  }).toList();
+      final questions = (jsonDecode(row[columnQuestions]) as List<dynamic>)
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+      final name = row[columnName] as String;
+      final bookmarked = row[columnBookmarked] == 1; // Convert int to bool
+      final topic = row[columnTopic] as String;
+      return QuestionsList(questions, name, bookmarked, topic);
+    }).toList();
   }
 
   Future<void> updateBookmarkedStatus(String name, bool isBookmarked) async {
@@ -156,9 +169,10 @@ Future<int> insertList(QuestionsList questionsList) async {
     await db!.delete(table1, where: '$columnName = ?', whereArgs: [name]);
   }
 
-    Future<void> deleteTopic(String topic) async {
+  Future<void> deleteNote(String name) async {
     Database? db = await database;
-    await db!.delete(table1, where: '$columnName = ?', whereArgs: [topic]);
+    await db!.delete(table2, where: '$columnNotesName = ?', whereArgs: [name]);
+    await db.delete(table1, where: '$columnName = ?', whereArgs: [name]);
   }
 
   Future<void> updateName(String oldName, String newName) async {
@@ -170,32 +184,38 @@ Future<int> insertList(QuestionsList questionsList) async {
       whereArgs: [oldName],
     );
   }
-  Future<bool> isNameExist(String name) async {
-  Database? db = await database;
-  List<Map<String, dynamic>> result =
-      await db!.query(table1, where: '$columnName = ?', whereArgs: [name]);
 
-  return result.isNotEmpty;
-}
-
-}
-
-  List<Map<String, dynamic>> stringtoJSON(String reply) {
-    RegExp jsonSeparatorPattern = RegExp(r'}\s*,\s*{');
-    List<String> jsonStrings = reply.split(jsonSeparatorPattern);
-
-    List<Map<String, dynamic>> jsonObjects = [];
-
-    for (String jsonStr in jsonStrings) {
-      if (!jsonStr.startsWith('{')) {
-        jsonStr = '{$jsonStr';
-      }
-      if (!jsonStr.endsWith('}')) {
-        jsonStr = '$jsonStr}';
-      }
-
-      Map<String, dynamic> jsonObject = jsonDecode(jsonStr);
-      jsonObjects.add(jsonObject);
-    }
-    return jsonObjects;
+  Future<void> updateNote(String saved, String name) async {
+    Database? db = await database;
+    await db!.update(table2, {columnNotes: saved},
+        where: '$columnNotesName = ?', whereArgs: [name]);
   }
+
+  Future<bool> isNameExist(String name) async {
+    Database? db = await database;
+    List<Map<String, dynamic>> result =
+        await db!.query(table1, where: '$columnName = ?', whereArgs: [name]);
+
+    return result.isNotEmpty;
+  }
+}
+
+List<Map<String, dynamic>> stringtoJSON(String reply) {
+  RegExp jsonSeparatorPattern = RegExp(r'}\s*,\s*{');
+  List<String> jsonStrings = reply.split(jsonSeparatorPattern);
+
+  List<Map<String, dynamic>> jsonObjects = [];
+
+  for (String jsonStr in jsonStrings) {
+    if (!jsonStr.startsWith('{')) {
+      jsonStr = '{$jsonStr';
+    }
+    if (!jsonStr.endsWith('}')) {
+      jsonStr = '$jsonStr}';
+    }
+
+    Map<String, dynamic> jsonObject = jsonDecode(jsonStr);
+    jsonObjects.add(jsonObject);
+  }
+  return jsonObjects;
+}
