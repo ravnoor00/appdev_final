@@ -82,7 +82,7 @@ class DatabaseHelper {
 
   Future<int> insertNotes(Notes note) async {
     Database? db = await database;
-    insertList(note.questions!);
+    if(note.questions != null) insertList(note.questions!);
     final row = {
       columnNotesName: note.name,
       columnQuestions: note.questions?.name ?? '',
