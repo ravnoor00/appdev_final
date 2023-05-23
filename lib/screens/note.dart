@@ -28,15 +28,13 @@ class _NoteState extends State<Note> {
   late DatabaseHelper dbHelper;
   List<Map<String, dynamic>> _questions = [];
 
-  _NoteState() {
-    _notesController = TextEditingController(text: widget.note.notes);
-  }
+@override
+void initState() {
+  super.initState();
+  dbHelper = DatabaseHelper();
+  _notesController = TextEditingController(text: widget.note.notes);
+}
 
-  @override
-  void initState() {
-    super.initState();
-    dbHelper = DatabaseHelper();
-  }
 
   @override
   void dispose() {
@@ -209,7 +207,7 @@ class _NoteState extends State<Note> {
                           thickness: 0.5,
                           color: Colors.black,
                         ),
-                        _sendingText ? TextFormField(
+                        !_sendingText ? TextFormField(
                           controller: _notesController,
                           keyboardType: TextInputType.multiline,
                           maxLines: null,

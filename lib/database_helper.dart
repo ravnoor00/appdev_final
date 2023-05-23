@@ -48,7 +48,7 @@ class DatabaseHelper {
     );
   }
 
-  Future _onCreate(Database db, int version) async {
+Future _onCreate(Database db, int version) async {
     await db.execute('''
     CREATE TABLE $table1 (
       $columnName TEXT NOT NULL,
@@ -61,11 +61,12 @@ class DatabaseHelper {
     CREATE TABLE $table2 (
       $columnNotesName TEXT NOT NULL,
       $columnNotesQuestions TEXT NOT NULL,
-      $columnNotesTopic TEXT NOT NULL
+      $columnNotesTopic TEXT NOT NULL, 
       $columnNotes TEXT NOT NULL
     )
   ''');
-  }
+}
+
 
   Future<int> insertList(QuestionsList questionsList) async {
     Database? db = await database;

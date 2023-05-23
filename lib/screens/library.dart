@@ -32,7 +32,7 @@ class _LibraryState extends State<Library> {
         icon: Icon(Icons.book),
         text: "Intro to CS",
         number: "7",
-        color: Colors.grey[500]!),
+        color: Colors.grey[500]),
     //   HeaderItem(
     //       icon: Icon(Icons.book),
     //       text: "CS for nerds",
@@ -59,6 +59,7 @@ class _LibraryState extends State<Library> {
 
   void _addNewNote() {
     setState(() {
+      _isDeleting = false;
       noteItems.add(HeaderItem(
           icon: Icon(Icons.book),
           text: "New Note",
@@ -89,10 +90,10 @@ class _LibraryState extends State<Library> {
               context,
               Note(
                   note: Notes(
-                      notes: "Hi Mister",
-                      name: "random",
-                      topic: "Hi",
-                    )));
+                notes: "Hi Mister",
+                name: "random",
+                topic: "Hi",
+              )));
         }
       },
       child: Container(
