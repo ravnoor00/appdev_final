@@ -5,26 +5,26 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'package:makequiz/screens/home.dart';
-import 'questions.dart';
-import '../database_helper.dart';
-import '../models/question.dart';
-import 'flashcards.dart';
+import 'package:makequiz/screens/home/home.dart';
+import '../studyOptions/testYourself/testYourself.dart';
+import '../../database_helper.dart';
+import '../../models/question.dart';
+import '../studyOptions/flashcards/flashcards.dart';
 import 'package:makequiz/models/flashcard.dart';
-import 'feynman.dart';
-import '../components/study_options.dart';
+import '../studyOptions/feynman/feynman.dart';
+import '../../components/StudyOptions.dart';
 import 'package:makequiz/utils.dart';
-import 'match.dart';
+import '../studyOptions/match/match.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class ImageToText extends StatefulWidget {
-  const ImageToText({Key? key}) : super(key: key);
+class AddNew extends StatefulWidget {
+  const AddNew({Key? key}) : super(key: key);
 
   @override
-  State<ImageToText> createState() => _ImageToText();
+  State<AddNew> createState() => _AddNew();
 }
 
-class _ImageToText extends State<ImageToText> {
+class _AddNew extends State<AddNew> {
   File? _image;
   String _responseText = '';
   bool _sendingText = false;
@@ -120,7 +120,7 @@ class _ImageToText extends State<ImageToText> {
     });
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.247:5001/process_image'),
+        Uri.parse('http://192.168.1.181:5001/process_image'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'text': recognizedText}),
       );
@@ -148,62 +148,59 @@ class _ImageToText extends State<ImageToText> {
     return _questions;
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         // backgroundColor: bgColor,
         body: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.65,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: _takenImages.isEmpty
-                        ? const Center(
-                            child: Text(
-                            'No images selected.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 40,
-                              color: Colors.black,
+      physics: const NeverScrollableScrollPhysics(),
+      child: Center(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+                height: MediaQuery.of(context).size.height * 0.65,
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: _takenImages.isEmpty
+                    ? const Center(
+                        child: Text(
+                        'No images selected.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Colors.black,
+                        ),
+                      ))
+                    : GridView.builder(
+                        shrinkWrap: true,
+                        itemCount: _takenImages.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: _takenImages.length <= 2 ? 1 : 2,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            childAspectRatio: 0.65),
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7),
+                              border: Border.all(
+                                color: Colors.black,
+                              ),
                             ),
-                          ))
-                        : GridView.builder(
-                            shrinkWrap: true,
-                            itemCount: _takenImages.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        _takenImages.length <= 2 ? 1 : 2,
-                                    mainAxisSpacing: 10,
-                                    crossAxisSpacing: 10,
-                                    childAspectRatio: 0.65),
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(7),
-                                  border: Border.all(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                child: Image.file(
-                                  _takenImages[index],
-                                  fit: BoxFit.fill,
-                                ),
-                              );
-                            },
-                          )),
-                !loadingText && !_sendingText
-                    ? actions()
-                    : LoadingAnimationWidget.threeArchedCircle(color: redorange, size: 125)
-              ],
-            ),
-          ),
-        ));
+                            child: Image.file(
+                              _takenImages[index],
+                              fit: BoxFit.fill,
+                            ),
+                          );
+                        },
+                      )),
+            !loadingText && !_sendingText
+                ? actions()
+                : LoadingAnimationWidget.threeArchedCircle(
+                    color: redorange, size: 125)
+          ],
+        ),
+      ),
+    ));
   }
 
   Widget _buildButton({
@@ -225,7 +222,7 @@ class _ImageToText extends State<ImageToText> {
               color: backgroundColor,
               borderRadius: BorderRadius.circular(25),
               border: Border.all(
-                  color: Colors.black, width: 2.5), // Add border here
+                  color: Colors.grey[600]!, width: 2.5), // Add border here
             ),
             child: icon,
           ),
@@ -235,11 +232,11 @@ class _ImageToText extends State<ImageToText> {
   }
 
   void _showModal() {
-    showModalMenu(context, onQuestionsFile: () {
+    showStudyOptions(context, onQuestionsFile: () {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => QuestionsFlow(questions: _questions),
+          builder: (context) => Test(questions: _questions),
           fullscreenDialog: true,
         ),
       );
@@ -249,7 +246,7 @@ class _ImageToText extends State<ImageToText> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => FlashcardTest(flashcards: flashcards),
+          builder: (context) => Flashcards(flashcards: flashcards),
         ),
       );
     }, onFeynman: () {
@@ -258,7 +255,7 @@ class _ImageToText extends State<ImageToText> {
         context,
         MaterialPageRoute(
           builder: (context) =>
-              FeynmanFlow(questions: _questions, currentQuestionIndex: 0),
+              Feynman(questions: _questions, currentQuestionIndex: 0),
         ),
       );
     }, onMatch: () {
@@ -273,12 +270,11 @@ class _ImageToText extends State<ImageToText> {
   }
 
   Future<void> _checkName(String name) async {
-  bool nameExists = await dbHelper.isNameExist(name);
-  setState(() {
-    _nameError = nameExists ? 'Name already exists' : null;
-  });
-}
-
+    bool nameExists = await dbHelper.isNameExist(name);
+    setState(() {
+      _nameError = nameExists ? 'Name already exists' : null;
+    });
+  }
 
   // ...
 
@@ -292,10 +288,20 @@ class _ImageToText extends State<ImageToText> {
             size: 60,
             backgroundColor: Colors.grey,
             icon: const Icon(Icons.add,
-                color: Colors.black, size: 40, weight: 600),
+                color: Colors.white, size: 40, weight: 600),
             onPressed: () {
               getImages();
             },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: _buildButton(
+            size: 80,
+            backgroundColor: Colors.yellow[700]!,
+            icon: const Icon(Icons.edit_note_rounded,
+                color: Colors.white, size: 50, weight: 500),
+            onPressed: () {},
           ),
         ),
         Padding(
@@ -316,7 +322,7 @@ class _ImageToText extends State<ImageToText> {
             size: 60,
             backgroundColor: Colors.green,
             icon: const Icon(Icons.check,
-                color: Colors.black, size: 40, weight: 600),
+                color: Colors.white, size: 40, weight: 600),
             onPressed: () {
               _showTopicInputDialog(context);
             },
@@ -331,24 +337,24 @@ class _ImageToText extends State<ImageToText> {
     TextEditingController topicController = TextEditingController();
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-      InputDecoration curvedTextFieldDecoration(String text) {
-    return InputDecoration(
-      hintText: text,
-      fillColor: textField,
-      filled: true,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.6)),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        borderSide: const BorderSide(color: Colors.white),
-      ),
-    );
-  }
+    InputDecoration curvedTextFieldDecoration(String text) {
+      return InputDecoration(
+        hintText: text,
+        fillColor: textField,
+        filled: true,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.6)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+      );
+    }
 
     showDialog(
       context: context,
@@ -374,18 +380,17 @@ class _ImageToText extends State<ImageToText> {
                     padding: EdgeInsets.symmetric(vertical: 8.0),
                   ),
                   TextFormField(
-                    
                     controller: nameController,
                     decoration: curvedTextFieldDecoration('Name'),
                     validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a name';
-                    }
-                    return _nameError;
-                  },
-                  onChanged: (value) {
-                    _checkName(value);
-                  },
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a name';
+                      }
+                      return _nameError;
+                    },
+                    onChanged: (value) {
+                      _checkName(value);
+                    },
                     style: TextStyle(color: Colors.black),
                   ),
                   const SizedBox(height: 10),
@@ -394,7 +399,7 @@ class _ImageToText extends State<ImageToText> {
                   ),
                   TextFormField(
                     controller: topicController,
-                     decoration: curvedTextFieldDecoration("Topic"),
+                    decoration: curvedTextFieldDecoration("Topic"),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a topic';
@@ -421,7 +426,7 @@ class _ImageToText extends State<ImageToText> {
                   if (formKey.currentState!.validate()) {
                     Navigator.of(context).pop();
                     try {
-                      String name= nameController.text;
+                      String name = nameController.text;
                       String topic = topicController.text;
                       sendRecognizedText(_notes, name, topic).then((_) {
                         if (!_sendingText) {

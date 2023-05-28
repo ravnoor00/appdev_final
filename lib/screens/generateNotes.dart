@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'home.dart';
-import 'questions.dart';
+import 'home/home.dart';
+import 'studyOptions/testYourself/testYourself.dart';
 import '../database_helper.dart';
 import '../models/question.dart';
-import 'flashcards.dart';
+import 'studyOptions/flashcards/flashcards.dart';
 import 'package:makequiz/models/flashcard.dart';
-import 'feynman.dart';
-import '../components/study_options.dart';
+import 'studyOptions/feynman/feynman.dart';
+import '../components/StudyOptions.dart';
 import 'package:makequiz/utils.dart';
-import 'match.dart';
+import 'studyOptions/match/match.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../components/Nav.dart';
 
@@ -22,6 +22,10 @@ class GenerateNotes extends StatefulWidget {
   @override
   State<GenerateNotes> createState() => _GenerateNotes();
 }
+
+const jeffreyIP = "192.168.1.181";
+const ravnoorIP = "192.168.1.247";
+const localhost = "localhost";
 
 class _GenerateNotes extends State<GenerateNotes> {
   late DatabaseHelper dbHelper;
@@ -52,7 +56,7 @@ class _GenerateNotes extends State<GenerateNotes> {
       String recognizedText, String name, String topic) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.247:5001/process_image'),
+        Uri.parse('http://$jeffreyIP:5001/process_image'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'text': recognizedText}),
       );
@@ -80,7 +84,7 @@ class _GenerateNotes extends State<GenerateNotes> {
       String text, String name, String topic) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.247:5001/generate_questions'),
+        Uri.parse('http://$jeffreyIP:5001/generate_questions'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'text': text}),
       );
@@ -340,11 +344,11 @@ class _GenerateNotes extends State<GenerateNotes> {
   }
 
   void _showModal() {
-    showModalMenu(context, onQuestionsFile: () {
+    showStudyOptions(context, onQuestionsFile: () {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => QuestionsFlow(questions: _questions),
+          builder: (context) => Test(questions: _questions),
           fullscreenDialog: true,
         ),
       );
@@ -354,7 +358,7 @@ class _GenerateNotes extends State<GenerateNotes> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => FlashcardTest(flashcards: flashcards),
+          builder: (context) => Flashcards(flashcards: flashcards),
         ),
       );
     }, onFeynman: () {
@@ -363,7 +367,7 @@ class _GenerateNotes extends State<GenerateNotes> {
         context,
         MaterialPageRoute(
           builder: (context) =>
-              FeynmanFlow(questions: _questions, currentQuestionIndex: 0),
+              Feynman(questions: _questions, currentQuestionIndex: 0),
         ),
       );
     }, onMatch: () {
@@ -377,5 +381,3 @@ class _GenerateNotes extends State<GenerateNotes> {
     });
   }
 }
-
-

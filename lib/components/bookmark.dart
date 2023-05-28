@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class CustomBookmarkIcon extends StatefulWidget {
+class Bookmark extends StatefulWidget {
   final bool initialValue;
   final ValueChanged<bool>? onChanged;
 
-  const CustomBookmarkIcon({Key? key, this.initialValue = false, this.onChanged}) : super(key: key);
+  const Bookmark({Key? key, this.initialValue = false, this.onChanged}) : super(key: key);
 
   @override
-  State<CustomBookmarkIcon> createState() => _CustomBookmarkIcon();
+  State<Bookmark> createState() => _Bookmark();
 }
 
-class _CustomBookmarkIcon extends State<CustomBookmarkIcon> {
+class _Bookmark extends State<Bookmark> {
   bool _isSelected = false;
 
   @override
@@ -51,7 +51,7 @@ class _BookmarkIconPainter extends CustomPainter {
     final borderPaint = Paint()
       ..color = Colors.orange
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4.0;
+      ..strokeWidth = 3.0;
 
     final fillPaint = Paint()
       ..color = isSelected ? Colors.orange : Colors.white
@@ -64,6 +64,7 @@ class _BookmarkIconPainter extends CustomPainter {
       ..quadraticBezierTo(size.width, size.height, size.width / 2, size.height * 0.7)
       ..quadraticBezierTo(0, size.height, 0, size.height - 6)
       ..close();
+      
 
     canvas.drawPath(path, fillPaint);
     canvas.drawPath(path, borderPaint);
@@ -74,3 +75,4 @@ class _BookmarkIconPainter extends CustomPainter {
     return oldDelegate.isSelected != isSelected;
   }
 }
+

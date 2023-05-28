@@ -87,13 +87,13 @@ class _LibraryState extends State<Library> {
           _deleteNote(index);
         } else {
           navigate(
-              context,
               Note(
                   note: Notes(
                 notes: "Hi Mister",
                 name: "random",
                 topic: "Hi",
-              )));
+              )),
+              context);
         }
       },
       child: Container(
@@ -124,10 +124,10 @@ class _LibraryState extends State<Library> {
                       )
                     : item.icon,
                 const SizedBox(width: 10),
-                Expanded(
+                const Expanded(
                   child: Text(
                     "title",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87,
@@ -146,8 +146,6 @@ class _LibraryState extends State<Library> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: nav("Library", context),
-      drawer: sidebar(context),
       body: Container(
         margin: EdgeInsets.only(top: 25),
         child: Column(

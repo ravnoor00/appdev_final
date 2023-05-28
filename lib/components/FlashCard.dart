@@ -2,17 +2,16 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:makequiz/models/flashcard.dart';
 
-class FlipCard extends StatefulWidget {
+class FlashCard extends StatefulWidget {
   final Flashcard flashcard;
 
-  const FlipCard({Key? key, required this.flashcard})
-      : super(key: key);
+  const FlashCard({Key? key, required this.flashcard}) : super(key: key);
 
   @override
-  State<FlipCard> createState() => _FlipCard();
+  State<FlashCard> createState() => _FlashCard();
 }
 
-class _FlipCard extends State<FlipCard> with SingleTickerProviderStateMixin {
+class _FlashCard extends State<FlashCard> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -89,33 +88,32 @@ class _FlipCard extends State<FlipCard> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildCardSide(String text, BuildContext context) {
-  return Container(
-    height: MediaQuery.of(context).size.height * 0.6,
-    width: MediaQuery.of(context).size.width * 0.8,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      color: Colors.white,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.2),
-          blurRadius: 6,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    alignment: Alignment.center,
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.6,
+      width: MediaQuery.of(context).size.width * 0.8,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

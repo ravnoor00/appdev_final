@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:makequiz/screens/home/helpCenter.dart';
 import 'package:makequiz/screens/library.dart';
-import '../screens/home.dart';
+import '../screens/home/home.dart';
 import '../utils.dart';
 
 Widget sidebar(BuildContext context) {
@@ -11,8 +12,8 @@ Widget sidebar(BuildContext context) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
-            height: 100,
+          Container(
+            height: 75,
             child: DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.grey[100],
@@ -26,8 +27,8 @@ Widget sidebar(BuildContext context) {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        // backgroundImage: NetworkImage(user!.photoURL!),
-                      ),
+                          // backgroundImage: NetworkImage(user!.photoURL!),
+                          ),
                       const SizedBox(width: 12),
                       Text(
                         "Ravnoor Bedi",
@@ -45,7 +46,11 @@ Widget sidebar(BuildContext context) {
           ),
           ListTile(
             title: const Text('Home'),
-            leading: Icon(Icons.home),
+            leading: const Padding(
+              padding: EdgeInsets.only(
+                  left: 13), // Adjust the left margin as needed
+              child: Icon(Icons.home),
+            ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -56,46 +61,54 @@ Widget sidebar(BuildContext context) {
           ),
           ListTile(
             title: const Text('Library'),
-            leading: Icon(Icons.book),
+            leading: const Padding(
+              padding: EdgeInsets.only(
+                  left: 13), // Adjust the left margin as needed
+              child: Icon(Icons.book),
+            ),
             onTap: () {
-              navigate(context, Library());
+              navigate(Library(), context);
             },
           ),
           ListTile(
             title: const Text('Help Center'),
-            leading: Icon(Icons.help),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            child: const Divider(
-              color: Colors.grey,
-              thickness: 0.5,
+            leading: const Padding(
+              padding: EdgeInsets.only(
+                  left: 13), // Adjust the left margin as needed
+              child: Icon(Icons.help),
             ),
-          ),
-          ListTile(
-            title: const Text('Sign Out'),
-            leading: Icon(Icons.settings),
             onTap: () {
+              navigate(HelpCenter(), context);
             },
           ),
+          // Container(
+          //   margin: EdgeInsets.symmetric(horizontal: 10),
+          //   child: const Divider(
+          //     color: Colors.grey,
+          //     thickness: 0.5,
+          //   ),
+          // ),
+          // ListTile(
+          //   title: const Text('Sign Out'),
+          //   leading: Icon(Icons.settings),
+          //   onTap: () {
+          //   },
+          // ),
         ],
       ),
     ),
   );
 }
 
-PreferredSizeWidget? nav(String title, BuildContext context) {
+PreferredSizeWidget? nav(String title, BuildContext context, {bool? elevation}) {
   return AppBar(
-    toolbarHeight: 60,
-    foregroundColor: Colors.grey[700],
-    backgroundColor: bgColor,
+    foregroundColor: Colors.white,
+    backgroundColor: Colors.red,
     elevation: 1,
     title: Text("$title",
+    textAlign: TextAlign.start,
         style:
-            const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
     centerTitle: true,
     // actions: [
     //   Padding(

@@ -47,6 +47,8 @@ dependencies:
   loading_animation_widget: ^1.2.0+4
   flutter_speed_dial: ^6.2.0
   google_fonts: ^4.0.4
+  lottie: ^2.3.2
+  url_launcher: ^6.1.11
 
 
 

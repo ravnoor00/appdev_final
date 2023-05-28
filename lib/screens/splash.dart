@@ -16,7 +16,7 @@ class Splash extends StatelessWidget {
           children:  [
              const CircleAvatar(
               radius: 110,
-              backgroundImage: AssetImage('assets/logo.png'),
+              backgroundImage: AssetImage('assets/google.png'),
             ),
             SizedBox(height: 75),
             Text(

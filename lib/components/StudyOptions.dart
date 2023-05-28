@@ -1,7 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 
-Future<void> showModalMenu(BuildContext context,
+Future<void> showStudyOptions(BuildContext context,
     {required VoidCallback onQuestionsFile, required VoidCallback onFlashcards, required VoidCallback onFeynman, required VoidCallback onMatch}) async {
   showCupertinoModalPopup(
     context: context,

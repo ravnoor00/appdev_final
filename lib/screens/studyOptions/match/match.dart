@@ -2,8 +2,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:makequiz/utils.dart';
 import 'dart:async';
-import '../models/griditem.dart';
-import 'home.dart';
+import '../../../components/Nav.dart';
+import '../../../models/griditem.dart';
+import '../../home/home.dart';
 
 class Match extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -75,47 +76,42 @@ class _Match extends State<Match> {
     if (isGameOver) {
       _timer?.cancel();
     }
-
+// 'Score: ${_getScore()} || Time: $_elapsedSeconds'
     return Scaffold(
-      backgroundColor: yellow,
-      appBar: AppBar(
-          elevation: 0,
-          backgroundColor: yellow,
-          title: Text('Score: ${_getScore()} || Time: $_elapsedSeconds',
-              style: const TextStyle(color: Colors.black)),
-          leading: IconButton(
-              onPressed: () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (BuildContext context) => const Home()),
-          ),
-              icon: const Icon(Icons.home, color: Colors.black, size: 30))),
-      body: isGameOver
-          ? _GameOver(
-              incorrect: numberIncorrect,
-              score: _getScore(),
-              timeElapsed: _elapsedSeconds,
-              onTryAgain: () {
-                setState(() {
-                  _gridItems.clear();
-                  _prepareGridItems();
-                  _elapsedSeconds = 0;
-                  _startTimer();
-                });
-              },
-              onReturnHome: () {
-                Navigator.pop(context);
-              },
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _buildGridView(),
-                  ),
-                ),
-              ],
-            ),
+      appBar: nav("Match", context),
+      body: Container(
+        margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+        child: isGameOver
+            ? _GameOver(
+                incorrect: numberIncorrect,
+                score: _getScore(),
+                timeElapsed: _elapsedSeconds,
+                onTryAgain: () {
+                  setState(() {
+                    _gridItems.clear();
+                    _prepareGridItems();
+                    _elapsedSeconds = 0;
+                    _startTimer();
+                  });
+                },
+                onReturnHome: () {
+                  Navigator.pop(context);
+                },
+              )
+            : Column(
+                children: [
+                  const SizedBox(height: 15),
+                  stats(),
+                  const SizedBox(height: 15),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: _buildGridView(),
+                    ),
+                  )
+                ],
+              ),
+      ),
     );
   }
 
@@ -145,16 +141,15 @@ class _Match extends State<Match> {
                       ? Colors.green.shade100
                       : (item.incorrect
                           ? Colors.deepPurple
-                          : (item.notSelected
-                              ? yellow
-                              : redorange)),
+                          : (item.notSelected ? yellow : redorange)),
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(color: Colors.black, width: 1),
                 ),
                 child: Center(
                   child: Text(
                     item.content,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -163,6 +158,38 @@ class _Match extends State<Match> {
           ),
         );
       },
+    );
+  }
+
+  Widget stats() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Column(
+          children: [
+            Text("TIME", style: TextStyle(fontSize: 14)),
+            Text('$_elapsedSeconds',
+                style: TextStyle(
+                    color: redorange,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24))
+          ],
+        ),
+        const SizedBox(width: 15),
+        Column(
+          children: [
+            Text(
+              "SCORE",
+              style: TextStyle(fontSize: 14),
+            ),
+            Text('${_getScore()}',
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 24))
+          ],
+        )
+      ],
     );
   }
 
@@ -209,7 +236,7 @@ class _Match extends State<Match> {
     });
   }
 
-void _showIncorrectColor(GridItem a, GridItem b) {
+  void _showIncorrectColor(GridItem a, GridItem b) {
     setState(() {
       a.incorrect = true;
       b.incorrect = true;
@@ -225,8 +252,7 @@ void _showIncorrectColor(GridItem a, GridItem b) {
         });
       }
     });
-}
-
+  }
 
   @override
   void dispose() {

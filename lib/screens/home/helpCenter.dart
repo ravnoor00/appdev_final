@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../components/Nav.dart';
-import '../utils.dart';
+import '../../utils.dart';
 
 class HelpCenter extends StatelessWidget {
   const HelpCenter({super.key});
@@ -9,8 +9,6 @@ class HelpCenter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: nav("Help Center", context),
-      drawer: sidebar(context),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -40,18 +38,31 @@ class HelpCenter extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Email: support@example.com',
                 style: TextStyle(fontSize: 16),
               ),
-              Text(
+              const Text(
                 'Phone: +1 800 123 4567',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 20),
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () async {
+                  final Uri params = Uri(
+                    scheme: 'mailto',
+                    path: 'support@example.com',
+                    query: 'subject=Support Inquiry',
+                  );
+                  final String url = params.toString();
+
+                  if (await canLaunchUrl(params)) {
+                    await launchUrl(params);
+                  } else {
+                    throw 'Could not launch $url';
+                  }
+                },
                 icon: Icon(Icons.mail),
                 label: Text('Contact support'),
                 style: ElevatedButton.styleFrom(
