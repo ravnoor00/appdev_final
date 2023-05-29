@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:makequiz/components/FlashCard.dart';
+import 'package:makequiz/models/question.dart';
 import 'package:makequiz/utils.dart';
 
 import '../../../components/Nav.dart';
@@ -7,12 +8,13 @@ import '../../../models/flashcard.dart';
 import 'flashcards.dart';
 
 class FlashcardInstructions extends StatelessWidget {
-  const FlashcardInstructions({Key? key}) : super(key: key);
-  
+  final QuestionsList questions;
+
+  const FlashcardInstructions({Key? key, required this.questions}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<Flashcard> flashcardData = generateFlashcards(mockJsonData);
+    List<Flashcard> flashcardData = generateFlashcards(questions.questions);
     return Scaffold(
       appBar: nav("Instructions", context),
       body: Container(
@@ -33,7 +35,11 @@ class FlashcardInstructions extends StatelessWidget {
             const SizedBox(height: 30),
             TextButton(
               onPressed: () {
-                navigate(Flashcards(flashcards: flashcardData,), context);
+                navigate(
+                    Flashcards(
+                      flashcards: flashcardData,
+                    ),
+                    context);
               },
               child: Container(
                 color: redorange,

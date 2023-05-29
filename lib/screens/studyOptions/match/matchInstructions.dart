@@ -5,14 +5,11 @@ import 'package:makequiz/utils.dart';
 import '../../../components/Nav.dart';
 import '../../../models/question.dart';
 
-QuestionsList temporary = QuestionsList([
-    {'question': 'is jeffrey gay', 'answer': 'yes he is'},
-    {'question': 'is jeffrey gay', 'answer': 'yes he is'},
-    {'question': 'is jeffrey gay', 'answer': 'yes he is'}
-  ], 'hi', false, 'random');
 
 class MatchInstructions extends StatelessWidget {
-  const MatchInstructions({super.key});
+  final QuestionsList question;
+
+  const MatchInstructions({super.key, required this.question});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +29,7 @@ class MatchInstructions extends StatelessWidget {
             const SizedBox(height: 30),
             TextButton(
                 onPressed: () {
-                  navigate(Match(data: [temporary][0].questions), context);
+                  navigate(Match(data: question.questions), context);
                 },
                 child: Container(
                     color: redorange,

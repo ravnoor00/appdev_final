@@ -6,14 +6,10 @@ import '../../../components/Nav.dart';
 import '../../../models/question.dart';
 import 'feynman.dart';
 
-QuestionsList temporary = QuestionsList([
-  {'question': 'Is Jeffrey gay?', 'answer': 'Yes, he is.'},
-  {'question': 'Is Jeffrey gay?', 'answer': 'Yes, he is.'},
-  {'question': 'Is Jeffrey gay?', 'answer': 'Yes, he is.'}
-], 'hi', false, 'random');
-
 class FeynmanInstructions extends StatelessWidget {
-  const FeynmanInstructions({Key? key}) : super(key: key);
+  final QuestionsList questions;
+  const FeynmanInstructions({Key? key, required this.questions})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +35,7 @@ class FeynmanInstructions extends StatelessWidget {
               onPressed: () {
                 navigate(
                     Feynman(
-                        questions: mockJsonData[0]['questions'],
+                        questions: questions.questions,
                         currentQuestionIndex: 0),
                     context);
               },

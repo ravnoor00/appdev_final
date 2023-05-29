@@ -66,7 +66,7 @@ class _TestItem extends State<TestItem> {
   Future<void> getGrades(String userAnswer, String course) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.181:5001/generate_score'),
+        Uri.parse('http://192.168.1.247:5001/generate_score'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'user': userAnswer,
@@ -95,7 +95,7 @@ class _TestItem extends State<TestItem> {
   Future<void> getHint(String question, String answer) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.181:5001/generate_hint'),
+        Uri.parse('http://192.168.1.247:5001/generate_hint'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'question': question,

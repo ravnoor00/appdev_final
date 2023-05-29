@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import '../models/question.dart';
 
 import '../utils.dart';
 
 class HorizontalQuizCard extends StatelessWidget {
+  final QuestionsList questions;
   final String title;
   final String description;
   final int numOfQuestions;
 
   const HorizontalQuizCard({
+    required this.questions,
     required this.title,
     required this.description,
     required this.numOfQuestions,

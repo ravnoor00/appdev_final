@@ -27,8 +27,4 @@ QuestionsList temporaryUtil = QuestionsList([
   {'question': 'is jeffrey gay', 'answer': 'yes he is'}
 ], 'hi', false, 'random');
 
-List<Map<String, dynamic>> mockJsonData = [
-  {'question': 'What is the capital of France?', 'answer': 'Paris'},
-  {'question': 'Who painted the Mona Lisa?', 'answer': 'Leonardo da Vinci'},
-  {'question': 'What is the symbol for Iron?', 'answer': 'Fe'},
-];
+

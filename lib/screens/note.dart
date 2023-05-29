@@ -53,7 +53,7 @@ class _NoteState extends State<Note> {
     });
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.181:5001/process_image'),
+        Uri.parse('http://192.168.1.247:5001/process_image'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'text': recognizedText}),
       );
@@ -166,7 +166,8 @@ class _NoteState extends State<Note> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.more_vert),
         onPressed: () {
-          _showBottomModal();
+          _showBottomModal(widget.note.questions ?? temporaryUtil);
+                    print('hi');
         },
       ),
       body: Container(
@@ -222,7 +223,7 @@ class _NoteState extends State<Note> {
     );
   }
 
-  void _showBottomModal() {
+  void _showBottomModal(QuestionsList questions) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -232,22 +233,43 @@ class _NoteState extends State<Note> {
               ListTile(
                 leading: Icon(Icons.library_books_rounded),
                 title: const Text('Flashcards'),
-                onTap: () => {navigate(const FlashcardInstructions(), context)},
+                onTap: () {
+                  Navigator.pop(context);
+                  navigate(
+                      FlashcardInstructions(questions: questions), context);
+                },
               ),
               ListTile(
                 leading: Icon(Icons.text_snippet_rounded),
                 title: const Text('Test'),
-                onTap: () => {navigate(const TestInstructions(), context)},
+                onTap: () {
+                  Navigator.pop(context);
+                  navigate(TestInstructions(question: questions), context);
+                },
               ),
               ListTile(
                 leading: Icon(Icons.photo),
                 title: Text('Feynman'),
-                onTap: () => {navigate(FeynmanInstructions(), context)},
+                onTap: () {
+                  Navigator.pop(context);
+                  navigate(
+                      FeynmanInstructions(
+                        questions: questions,
+                      ),
+                      context);
+                },
               ),
               ListTile(
                 leading: Icon(Icons.headset),
                 title: Text('Match'),
-                onTap: () => {navigate(MatchInstructions(), context)},
+                onTap: () {
+                                    Navigator.pop(context);
+                  navigate(
+                      MatchInstructions(
+                        question: questions,
+                      ),
+                      context);
+                },
               ),
             ],
           ),

@@ -4,6 +4,7 @@ import 'package:makequiz/models/flashcard.dart';
 import 'package:makequiz/screens/home/addNew.dart';
 import 'package:makequiz/screens/home/helpCenter.dart';
 import 'package:makequiz/screens/studyOptions/testYourself/testYourselfInstructions.dart';
+import '../studyOptions/flashcards/flashcardInstructions.dart';
 import 'search.dart';
 import '../../components/Home/Statistics.dart';
 import '../../components/HorizontalQuizCard.dart';
@@ -129,16 +130,12 @@ class _Home extends State<Home> {
         const Text("Notes",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         const SizedBox(height: 10),
-        noteCards([temporaryUtil]),
+        _fetchData(),
         const SizedBox(height: 25),
         const Text("Quizzes",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         const SizedBox(height: 10),
-        const HorizontalQuizCard(
-          title: 'Quiz ${1 + 1}',
-          description: 'Description of Quiz ${1 + 1}',
-          numOfQuestions: (1 + 1) * 5,
-        ),
+        _quizCards(),
         const SizedBox(height: 25),
       ]),
     ));
@@ -183,6 +180,108 @@ class _Home extends State<Home> {
         } else {
           return const CircularProgressIndicator();
         }
+      },
+    );
+  }
+
+  Widget _quizCards() {
+    return FutureBuilder<List<QuestionsList>>(
+      future: _selectedButtonIndex == 0
+          ? dbHelper.queryAllRows()
+          : _selectedButtonIndex == 1
+              ? dbHelper.queryAllBookMarked()
+              : dbHelper.queryByTopic(topics[_selectedButtonIndex]),
+      builder:
+          (BuildContext context, AsyncSnapshot<List<QuestionsList>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          if (snapshot.data!.isEmpty) {
+            return const Text('Scan your notes',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 40, fontWeight: FontWeight.w600));
+          }
+          return QCards(snapshot.data!);
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+  Widget QCard(QuestionsList questionList) {
+    return GestureDetector(
+      onTap: () {
+      _showBottomModal(questionList);
+    },
+    child: HorizontalQuizCard(description: questionList.topic, title: questionList.name, questions: questionList, numOfQuestions: questionList.questions.length,));
+  }
+
+
+  Widget QCards(List<QuestionsList> data) {
+    List<Widget> QCardWidgets =
+        data.map((questionList) => QCard(questionList)).toList();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(children: QCardWidgets),
+    );
+  }
+
+
+
+  void _showBottomModal(QuestionsList questions) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.library_books_rounded),
+                title: const Text('Flashcards'),
+                onTap: () {
+                  Navigator.pop(context);
+                  navigate(
+                      FlashcardInstructions(questions: questions), context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.text_snippet_rounded),
+                title: const Text('Test'),
+                onTap: () {
+                  Navigator.pop(context);
+                  navigate(TestInstructions(question: questions), context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo),
+                title: Text('Feynman'),
+                onTap: () {
+                  Navigator.pop(context);
+                  navigate(
+                      FeynmanInstructions(
+                        questions: questions,
+                      ),
+                      context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.headset),
+                title: Text('Match'),
+                onTap: () {
+                  Navigator.pop(context);
+                  navigate(
+                      MatchInstructions(
+                        question: questions,
+                      ),
+                      context);
+                },
+              ),
+            ],
+          ),
+        );
       },
     );
   }
@@ -234,6 +333,7 @@ class _Home extends State<Home> {
         navigate(
             Note(
                 note: Notes(
+              questions: questionList,
               notes: "lorem ipsum",
               topic: questionList.topic,
               name: questionList.name,
@@ -286,100 +386,7 @@ class _Home extends State<Home> {
     );
   }
 
-  Widget noteCard2(QuestionsList questionList) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10),
-        height: 225,
-        width: 150,
-        child: Card(
-          elevation: 3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(color: Colors.black, width: 1),
-          ),
-          child: Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(15),
-                child: Text(
-                  questionList.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 20),
-              ListView.separated(
-                padding:
-                    EdgeInsets.only(right: 50), // Provide space for IconButton
-                itemCount: 20,
-                separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(color: Color.fromARGB(255, 32, 32, 32)),
-                itemBuilder: (BuildContext context, int index) =>
-                    Container(), // Empty container as item
-              ),
-              Row(
-                children: [
-                  const SizedBox(width: 15),
-                  Container(
-                    width: 2,
-                    color: Colors.red[200],
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize:
-                          MainAxisSize.min, // limit the size to its content
-                      children: [
-                        const SizedBox(height: 5),
-                        const SizedBox(height: 30),
-                        IconButton(
-                          icon: const Icon(Icons.more_horiz),
-                          onPressed: () {
-                            showCupertinoModalPopup(
-                              context: context,
-                              builder: (context) => CupertinoActionSheet(
-                                actions: [
-                                  CupertinoDialogAction(
-                                    child: const Text('Delete Note'),
-                                    onPressed: () async {
-                                      await dbHelper
-                                          .deleteRow(questionList.name);
-                                      setState(() {
-                                        isLoaded = false;
-                                      });
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  CupertinoDialogAction(
-                                    child: const Text('Change Name'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      _showNameChangeDialog(
-                                          context, questionList);
-                                    },
-                                  ),
-                                ],
-                                cancelButton: CupertinoDialogAction(
-                                  child: const Text('Cancel'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  
 
   Widget noteCards(List<QuestionsList> data) {
     List<Widget> noteCardWidgets =
@@ -387,47 +394,8 @@ class _Home extends State<Home> {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(children: [
-        noteCard(data[0]),
-        const SizedBox(width: 3),
-        noteCard(data[0]),
-        const SizedBox(width: 3),
-        noteCard(data[0]),
-        const SizedBox(width: 3),
-        noteCard(data[0]),
-        const SizedBox(width: 3),
-        noteCard(data[0]),
-        const SizedBox(width: 3),
-        noteCard(data[0]),
-        const SizedBox(width: 3),
-        noteCard(data[0]),
-        const SizedBox(width: 3),
-        noteCard(data[0]),
-        const SizedBox(width: 3),
-      ]),
+      child: Row(children: noteCardWidgets),
     );
-  }
-
-  void _showModal2(BuildContext context, var questions) {
-    showStudyOptions(context, onQuestionsFile: () {
-      Navigator.pop(context);
-      navigate(TestInstructions(), context);
-    }, onFlashcards: () {
-      List<Flashcard> flashcards = generateFlashcards(questions);
-      Navigator.pop(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Flashcards(flashcards: flashcards),
-        ),
-      );
-    }, onFeynman: () {
-      Navigator.pop(context);
-      navigate(FeynmanInstructions(), context);
-    }, onMatch: () {
-      Navigator.pop(context);
-      navigate(MatchInstructions(), context);
-    });
   }
 
   void _showNameChangeDialog(BuildContext context, QuestionsList questionList) {
@@ -514,4 +482,99 @@ class _Home extends State<Home> {
       }
     });
   }
+
+  // Widget noteCard2(QuestionsList questionList) {
+  //   return InkWell(
+  //     onTap: () {},
+  //     child: Container(
+  //       margin: EdgeInsets.symmetric(horizontal: 10),
+  //       height: 225,
+  //       width: 150,
+  //       child: Card(
+  //         elevation: 3,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(10),
+  //           side: const BorderSide(color: Colors.black, width: 1),
+  //         ),
+  //         child: Stack(
+  //           children: [
+  //             Padding(
+  //               padding: EdgeInsets.all(15),
+  //               child: Text(
+  //                 questionList.name,
+  //                 style: const TextStyle(fontWeight: FontWeight.bold),
+  //               ),
+  //             ),
+  //             const SizedBox(height: 20),
+  //             ListView.separated(
+  //               padding:
+  //                   EdgeInsets.only(right: 50), // Provide space for IconButton
+  //               itemCount: 20,
+  //               separatorBuilder: (BuildContext context, int index) =>
+  //                   const Divider(color: Color.fromARGB(255, 32, 32, 32)),
+  //               itemBuilder: (BuildContext context, int index) =>
+  //                   Container(), // Empty container as item
+  //             ),
+  //             Row(
+  //               children: [
+  //                 const SizedBox(width: 15),
+  //                 Container(
+  //                   width: 2,
+  //                   color: Colors.red[200],
+  //                 ),
+  //                 Expanded(
+  //                   child: Column(
+  //                     mainAxisSize:
+  //                         MainAxisSize.min, // limit the size to its content
+  //                     children: [
+  //                       const SizedBox(height: 5),
+  //                       const SizedBox(height: 30),
+  //                       IconButton(
+  //                         icon: const Icon(Icons.more_horiz),
+  //                         onPressed: () {
+  //                           showCupertinoModalPopup(
+  //                             context: context,
+  //                             builder: (context) => CupertinoActionSheet(
+  //                               actions: [
+  //                                 CupertinoDialogAction(
+  //                                   child: const Text('Delete Note'),
+  //                                   onPressed: () async {
+  //                                     await dbHelper
+  //                                         .deleteRow(questionList.name);
+  //                                     setState(() {
+  //                                       isLoaded = false;
+  //                                     });
+  //                                     Navigator.of(context).pop();
+  //                                   },
+  //                                 ),
+  //                                 CupertinoDialogAction(
+  //                                   child: const Text('Change Name'),
+  //                                   onPressed: () {
+  //                                     Navigator.of(context).pop();
+  //                                     _showNameChangeDialog(
+  //                                         context, questionList);
+  //                                   },
+  //                                 ),
+  //                               ],
+  //                               cancelButton: CupertinoDialogAction(
+  //                                 child: const Text('Cancel'),
+  //                                 onPressed: () {
+  //                                   Navigator.of(context).pop();
+  //                                 },
+  //                               ),
+  //                             ),
+  //                           );
+  //                         },
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

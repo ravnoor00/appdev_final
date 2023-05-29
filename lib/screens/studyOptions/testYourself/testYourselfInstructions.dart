@@ -6,14 +6,9 @@ import '../../../components/Nav.dart';
 import '../../../models/question.dart';
 import 'testYourself.dart';
 
-QuestionsList temporary = QuestionsList([
-  {'question': 'Is Jeffrey gay?', 'answer': 'Yes, he is.'},
-  {'question': 'Is Jeffrey gay?', 'answer': 'Yes, he is.'},
-  {'question': 'Is Jeffrey gay?', 'answer': 'Yes, he is.'}
-], 'hi', false, 'random');
-
 class TestInstructions extends StatelessWidget {
-  const TestInstructions({Key? key}) : super(key: key);
+  final QuestionsList question;
+  const TestInstructions({Key? key, required this.question}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +32,7 @@ class TestInstructions extends StatelessWidget {
             const SizedBox(height: 30),
             TextButton(
               onPressed: () {
-                navigate(Test(questions: temporary.questions), context);
+                navigate(Test(questions: question.questions), context);
               },
               child: Container(
                 color: redorange,

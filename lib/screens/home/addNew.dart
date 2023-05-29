@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:makequiz/screens/home/home.dart';
+import '../studyOptions/feynman/feynmanInstructions.dart';
+import '../studyOptions/flashcards/flashcardInstructions.dart';
+import '../studyOptions/match/matchInstructions.dart';
 import '../studyOptions/testYourself/testYourself.dart';
 import '../../database_helper.dart';
 import '../../models/question.dart';
@@ -16,6 +19,8 @@ import '../../components/StudyOptions.dart';
 import 'package:makequiz/utils.dart';
 import '../studyOptions/match/match.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+import '../studyOptions/testYourself/testYourselfInstructions.dart';
 
 class AddNew extends StatefulWidget {
   const AddNew({Key? key}) : super(key: key);
@@ -120,7 +125,7 @@ class _AddNew extends State<AddNew> {
     });
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.181:5001/process_image'),
+        Uri.parse('http://192.168.1.247:5001/process_image'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'text': recognizedText}),
       );
@@ -231,42 +236,59 @@ class _AddNew extends State<AddNew> {
     );
   }
 
-  void _showModal() {
-    showStudyOptions(context, onQuestionsFile: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Test(questions: _questions),
-          fullscreenDialog: true,
-        ),
-      );
-    }, onFlashcards: () {
-      List<Flashcard> flashcards = generateFlashcards(_questions);
-      Navigator.pop(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Flashcards(flashcards: flashcards),
-        ),
-      );
-    }, onFeynman: () {
-      Navigator.pop(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              Feynman(questions: _questions, currentQuestionIndex: 0),
-        ),
-      );
-    }, onMatch: () {
-      Navigator.pop(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Match(data: _questions),
-        ),
-      );
-    });
+  void _showBottomModal(QuestionsList questions) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.library_books_rounded),
+                title: const Text('Flashcards'),
+                onTap: () {
+                  Navigator.pop(context);
+                  navigate(
+                      FlashcardInstructions(questions: questions), context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.text_snippet_rounded),
+                title: const Text('Test'),
+                onTap: () {
+                  Navigator.pop(context);
+                  navigate(TestInstructions(question: questions), context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo),
+                title: Text('Feynman'),
+                onTap: () {
+                  Navigator.pop(context);
+                  navigate(
+                      FeynmanInstructions(
+                        questions: questions,
+                      ),
+                      context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.headset),
+                title: Text('Match'),
+                onTap: () {
+                                    Navigator.pop(context);
+                  navigate(
+                      MatchInstructions(
+                        question: questions,
+                      ),
+                      context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _checkName(String name) async {
@@ -279,57 +301,59 @@ class _AddNew extends State<AddNew> {
   // ...
 
   Widget actions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: _buildButton(
-            size: 60,
-            backgroundColor: Colors.grey,
-            icon: const Icon(Icons.add,
-                color: Colors.white, size: 40, weight: 600),
-            onPressed: () {
-              getImages();
-            },
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: _buildButton(
-            size: 80,
-            backgroundColor: Colors.yellow[700]!,
-            icon: const Icon(Icons.edit_note_rounded,
-                color: Colors.white, size: 50, weight: 500),
-            onPressed: () {},
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: _buildButton(
-            size: 80,
-            backgroundColor: Colors.deepOrangeAccent,
-            icon: const Icon(Icons.camera_alt_outlined,
-                color: Colors.white, size: 50, weight: 500),
-            onPressed: () {
-              takeImage();
-            },
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: _buildButton(
-            size: 60,
-            backgroundColor: Colors.green,
-            icon: const Icon(Icons.check,
-                color: Colors.white, size: 40, weight: 600),
-            onPressed: () {
-              _showTopicInputDialog(context);
-            },
-          ),
-        ),
-      ],
-    );
+    return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: _buildButton(
+                size: 60,
+                backgroundColor: Colors.grey,
+                icon: const Icon(Icons.add,
+                    color: Colors.white, size: 40, weight: 600),
+                onPressed: () {
+                  getImages();
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: _buildButton(
+                size: 80,
+                backgroundColor: Colors.yellow[700]!,
+                icon: const Icon(Icons.edit_note_rounded,
+                    color: Colors.white, size: 50, weight: 500),
+                onPressed: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: _buildButton(
+                size: 80,
+                backgroundColor: Colors.deepOrangeAccent,
+                icon: const Icon(Icons.camera_alt_outlined,
+                    color: Colors.white, size: 50, weight: 500),
+                onPressed: () {
+                  takeImage();
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: _buildButton(
+                size: 60,
+                backgroundColor: Colors.green,
+                icon: const Icon(Icons.check,
+                    color: Colors.white, size: 40, weight: 600),
+                onPressed: () {
+                  _showTopicInputDialog(context);
+                },
+              ),
+            ),
+          ],
+        ));
   }
 
   void _showTopicInputDialog(BuildContext context) {
@@ -430,7 +454,8 @@ class _AddNew extends State<AddNew> {
                       String topic = topicController.text;
                       sendRecognizedText(_notes, name, topic).then((_) {
                         if (!_sendingText) {
-                          _showModal();
+                          _showBottomModal(
+                              QuestionsList(_questions, name, false, topic));
                         }
                       });
                     } catch (e) {

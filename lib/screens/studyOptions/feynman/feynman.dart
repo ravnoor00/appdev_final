@@ -104,7 +104,7 @@ class _FeynmanItemState extends State<FeynmanItem> {
       String teacher, String answer, String question) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.181:5001/generate_student_response'),
+        Uri.parse('http://192.168.1.247:5001/generate_student_response'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'user': teacher,
